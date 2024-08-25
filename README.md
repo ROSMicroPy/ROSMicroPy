@@ -8,7 +8,7 @@ ROSMicroPy has two goals.
 
 * Expand on the idea of modular robotics where a robot can consist of many distributed compute modules that are organized into a single heterogenous interface using the "RollCall" protocol. The goal here is to allow robots to be assembled from many nodes, giving it more of a lego assembly feel, and having a Controller / IDE seeing all those nodes as a single robot control / programming interface.
 
-* #### [Get Started](docs/LearnMore.md)
+* #### [Get Started Build a Bot](docs/LearnMore.md)
 * #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
 * #### [Learn more about MicroROS Type support](docs/implementation/typeSupport.md)
 * #### [Python Example Code](./python_example_code/README.md)

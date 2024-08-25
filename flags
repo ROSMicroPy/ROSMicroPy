@@ -1,0 +1,23 @@
+                "-DRMW_UXRCE_MAX_NODES=1",
+                "-DRMW_UXRCE_MAX_PUBLISHERS=1",
+                "-DRMW_UXRCE_MAX_SUBSCRIPTIONS=0",
+                "-DRMW_UXRCE_MAX_SERVICES=0",
+                "-DRMW_UXRCE_MAX_CLIENTS=0",
+                "-DRMW_UXRCE_MAX_HISTORY=16",
+                "-DRMW_UXRCE_STREAM_HISTORY=16",
+
+
+add_definitions(-DUDP_MAX_MESSAGE_SIZE=65536)
+I have also changed a line in /firmware/mcu_ws/eProsima/Micro-XRCE-DDS-Client/CMakeLists.txt so now it says : 
+set(UCLIENT_UDP_TRANSPORT_MTU 4096 CACHE STRING "Set the UDP transport MTU.") . This has changed nothing.
+
+Hi @krm-mir,
+The payload size is calculated at building time, when this file is generated:
+https://github.com/micro-ROS/rmw-microxrcedds/blob/80a305b05dec7ff0954c91726db78418fbf07661/rmw_microxrcedds_c/src/config.h.in#L26
+
+As you can see this is related with the RMW_UXRCE_STREAM_HISTORY, which you can modify on the CMakeFile and the RMW_UXRCE_MAX_TRANSPORT_MTU which is a value manage by Micro-XRCE-DDS and you can modify it on the next file: Micro-XRCE-DDS Config.
+
+To clarify, the MTU on Micro-XRCE-DDS is the maximum size of data that can be sent on each packet. This value can be modified but having in mind that RMW_UXRCE_STREAM_HISTORY*RMW_UXRCE_MAX_TRANSPORT_MTU should be at least 2048.
+
+RMW_UXRCE_STREAM_HISTORY
+CONFIG_UDP_TRANSPORT_MTU.
