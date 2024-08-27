@@ -1,0 +1,22 @@
+#!/bin/bash
+
+cd /opt/rosmicropy/micropython/ports/esp32
+
+rm -rf build
+idf.py -D MICROPY_BOARD=RMP_WROVER_B -DUSER_C_MODULES=../../../../modules build
+cp build/micropython_RMP_WROVER_B.bin /opt/rosmicropy/release/rmp_core_generic.bin
+cp build/micropython_RMP_WROVER_B.elf /opt/rosmicropy/release/rmp_core_generic.elf
+cp build/micropython_RMP_WROVER_B.map /opt/rosmicropy/release/rmp_core_generic.map
+
+cp build/bootloader/bootloader.bin /opt/rosmicropy/release/rmp_core_generic_bootloader.bin
+cp build/partition_table/partition-table.bin /opt/rosmicropy/release/rmp_core_generic_partition-table.bin
+
+rm -rf build
+idf.py -D MICROPY_BOARD=RMP_WROOM1_S3 -DUSER_C_MODULES=../../../../modules build
+cp build/micropython_RMP_WROOM1_S3.bin /opt/rosmicropy/release/rmp_core_s3.bin
+cp build/micropython_RMP_WROOM1_S3.elf /opt/rosmicropy/release/rmp_core_s3.elf
+cp build/micropython_RMP_WROOM1_S3.map /opt/rosmicropy/release/rmp_core_s3.map
+
+cp build/bootloader/bootloader.bin /opt/rosmicropy/release/rmp_core_s3_bootloader.bin
+cp build/partition_table/partition-table.bin /opt/rosmicropy/release/rmp_core_s3_partition-table.bin
+

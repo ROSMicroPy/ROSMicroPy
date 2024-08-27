@@ -17,16 +17,17 @@ At its core ROSMicroPy is an integration of Micropython and MicroROS providing f
 
 * An easy learning curve into ROS Robotics
 * Expandable beyond the basic configuration into the full ROS environment
-Distributed processing
-* Providing a modular platform based on the ROS robotics with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
+* Distributed processing
+* Providing a modular platform based on the ROS robotics platform with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
 
 ## Getting Started
-* #### [Install ROSMicroPy on an ESP32 device](docs/getting-started/FirstROSRobot-BOM.MD.md)
-
-* #### [Get Started Build a Bot](docs/LearnMore.md)
+* #### [Install ROSMicroPy on an ESP32 device](./docs/getting-started/installl-on-esp32.md)
+* #### [Basic ROS Example](docs/getting-started/basic-example.md)
 * #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
+
+## Technical implememtation
 * #### [Learn more about MicroROS Type support](docs/implementation/typeSupport.md)
-* #### [Python Example Code](./python_example_code/README.md)
+
 
 ### Current Build Profiles supported by ROSMicroPy
 
@@ -42,7 +43,7 @@ The **LCD Controller** introduces to new modules;
 
 ***ROSMicroPy-GUI***, is a [JSON Forms](https://jsonforms.io/) renderer for LVGL that allows for a Web based GUI layout designer to produce a JSON description of a screen layout that can be saved on a ROSMicroPy device.
 
-***ROSMiicroPy-JoyCom***, is a Bluetooth HID Central Server, that makes the inputs of a JoyCon device available for the ROSMicroPy environment. 
+***ROSMiicroPy-JoyCon***, is a Bluetooth HID Central Server, that makes the inputs of a JoyCon device available for the ROSMicroPy environment. 
 
 ![](docs/images/RMP_Cam_Stack.svg)
 
