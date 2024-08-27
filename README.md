@@ -1,12 +1,27 @@
-![](docs/images/ROSMicroPyHeader.svg)
+<div style="width:100%">
+<table style="background-color:#FEFEF2;width:100%">
+<tr style="border:1px solid">
+  <td style="width:90%;padding-left:10px;font-size:48pt;color:black;float:left">
+    <p style="float:left;">ROSMicroPy</p>
+  </td>
+  <td>
+    <img src="./docs/images/Logo.png" height="100" style="float:right"></span>
+ </td>
+ </tr>
+ </table>
+ </div>
+<br/>
+<hr/>
 
-## ROSMicroPy
-ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment along with native Micropython type support for ROS.
+At its core ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment providing;
 
-ROSMicroPy has two goals.
-* Provide a modular platform based on the ROS robotics with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
+* An easy learning curve into ROS Robotics
+* Expandable beyond the basic configuration into the full ROS environment
+Distributed processing
+* Providing a modular platform based on the ROS robotics with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
 
-* Expand on the idea of modular robotics where a robot can consist of many distributed compute modules that are organized into a single heterogenous interface using the "RollCall" protocol. The goal here is to allow robots to be assembled from many nodes, giving it more of a lego assembly feel, and having a Controller / IDE seeing all those nodes as a single robot control / programming interface.
+## Getting Started
+* #### [Install ROSMicroPy on an ESP32 device](docs/getting-started/FirstROSRobot-BOM.MD.md)
 
 * #### [Get Started Build a Bot](docs/LearnMore.md)
 * #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)

@@ -1,9 +1,9 @@
 clear
 
-NODENAME=rosmicropy.flasher
+NODENAME=rosmicropy-esp32flash
 
-DOCKER_DEF=Dockerfile-IDF51.ESP32_Flasher
-IMAGE_NAME=rosmicropy-idf5.1.3-esp32_flasher.img
+DOCKER_DEF=Dockerfile-rosmicropy-esp32flash
+IMAGE_NAME=gentijo/rosmicropy-esp32flash
 
 echo $1
 if [ "$1" == "clean" ]; then

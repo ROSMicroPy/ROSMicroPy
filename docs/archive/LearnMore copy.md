@@ -1,4 +1,4 @@
-# ROSMicroPy
+# ROSMicroPy - Initialize Board
 
 
 **ROSMicroPy is a tightly coupled integration of MicroROS and Micropython, multithreaded, async message, Python based ROS2 firmware for embedded microprocessor devices** 
