@@ -28,6 +28,9 @@ RUN apt -y update && \
 
 WORKDIR /opt
 RUN git clone https://github.com/gentijo/ROSMicroPy.git rosmicropy
+WORKDIR /opt/rosmicropy
+RUN git checkout refresh-demo-code
+RUN git pull
 WORKDIR /opt/rosmicropy/release
 
 COPY ./flasher_init_scripts.sh /flasher_init_scripts.sh
