@@ -1,3 +1,5 @@
+from machine import I2C
+
 import array
 import machine
 import utime
@@ -26,8 +28,8 @@ class MaqueenDrive:
     #
     #
     #
-    def __init__(self, i2c):
-        self.i2c = i2c
+    def __init__(self, i2c=None):
+        self.i2c=i2c
             
     #
     #
@@ -38,13 +40,13 @@ class MaqueenDrive:
         if (speed < 40): speed=40
         
         buf = bytearray(4)
-        buf[0] = mbits_maqueen_drive.Motor_Forward
+        buf[0] = MaqueenDrive.Motor_Forward
         buf[1] = speed
-        buf[2] = mbits_maqueen_drive.Motor_Forward
+        buf[2] = MaqueenDrive.Motor_Forward
         buf[3] = speed
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.LEFT_MOTOR_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.LEFT_MOTOR_REGISTER,
           buf)
 
     #
@@ -56,13 +58,13 @@ class MaqueenDrive:
         if (speed < 40): speed=40
         
         buf = bytearray(4)
-        buf[0] = mbits_maqueen_drive.Motor_Reverse
+        buf[0] = MaqueenDrive.Motor_Reverse
         buf[1] = speed
-        buf[2] = mbits_maqueen_drive.Motor_Reverse
+        buf[2] = MaqueenDrive.Motor_Reverse
         buf[3] = speed       
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.LEFT_MOTOR_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.LEFT_MOTOR_REGISTER,
           buf)
     #
     #
@@ -72,14 +74,14 @@ class MaqueenDrive:
         if (speed < 35): speed = 35
 
         buf = bytearray(4)
-        buf[0] = mbits_maqueen_drive.Motor_Forward
+        buf[0] = MaqueenDrive.Motor_Forward
         buf[1] = speed
-        buf[2] = mbits_maqueen_drive.Motor_Reverse
+        buf[2] = MaqueenDrive.Motor_Reverse
         buf[3] = speed
 
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.LEFT_MOTOR_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.LEFT_MOTOR_REGISTER,
           buf)
 
     #
@@ -89,13 +91,13 @@ class MaqueenDrive:
 
         if (speed < 35): speed = 35
         buf = bytearray(4)
-        buf[0] = mbits_maqueen_drive.Motor_Reverse
+        buf[0] = MaqueenDrive.Motor_Reverse
         buf[1] = speed
-        buf[2] = mbits_maqueen_drive.Motor_Forward
+        buf[2] = MaqueenDrive.Motor_Forward
         buf[3] = speed
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.LEFT_MOTOR_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.LEFT_MOTOR_REGISTER,
           buf)
 
 #
@@ -104,13 +106,13 @@ class MaqueenDrive:
     def stop(self):
         speed:int = 0;
         buf = bytearray(4)
-        buf[0] = mbits_maqueen_drive.Motor_Forward
+        buf[0] = MaqueenDrive.Motor_Forward
         buf[1] = speed
-        buf[2] = mbits_maqueen_drive.Motor_Forward
+        buf[2] = MaqueenDrive.Motor_Forward
         buf[3] = speed
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.LEFT_MOTOR_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.LEFT_MOTOR_REGISTER,
           buf)
 
 
@@ -121,10 +123,10 @@ class MaqueenDrive:
       distance:int
 
       buf:bytes = self.i2c.readfrom_mem(
-        mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-        mbits_maqueen_drive.LEFT_MOTOR_REGISTER, 4)
+        MaqueenDrive.Maqueen_I2C_DevAddr, 
+        MaqueenDrive.LEFT_MOTOR_REGISTER, 4)
 
-      if (MotorID == mbits_maqueen_drive.Motor_Left):
+      if (MotorID == MaqueenDrive.Motor_Left):
         distance = ((buf[0] << 8 | buf[1]) * 10) / 900
 
       else:
@@ -137,22 +139,22 @@ class MaqueenDrive:
     #
     #
     def clearDistance(self, MotorID:int):
-      if (MotorID == mbits_maqueen_drive.Motor_Left):
+      if (MotorID == MaqueenDrive.Motor_Left):
         buf = bytearray(1)
         buf[0] = 0
         
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.LEFT_DISTANCE_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.LEFT_DISTANCE_REGISTER,
           buf)
       
-      elif (MotorID == mbits_maqueen_drive.Motor_Right):
+      elif (MotorID == MaqueenDrive.Motor_Right):
         buf = bytearray(1)
         buf[0] = 0
         
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.RIGHT_DISTANCE_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.RIGHT_DISTANCE_REGISTER,
           buf)
       
       else:
@@ -161,8 +163,8 @@ class MaqueenDrive:
         buf[1] = 0
         buf[2] = 0
         self.i2c.writeto_mem(
-          mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-          mbits_maqueen_drive.LEFT_DISTANCE_REGISTER,
+          MaqueenDrive.Maqueen_I2C_DevAddr, 
+          MaqueenDrive.LEFT_DISTANCE_REGISTER,
           buf)     
         
 
@@ -173,15 +175,15 @@ class MaqueenDrive:
       speed:int = 0
 
       buf:bytes = self.i2c.readfrom_mem(
-        mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-        mbits_maqueen_drive.LEFT_MOTOR_REGISTER, 4)
+        MaqueenDrive.Maqueen_I2C_DevAddr, 
+        MaqueenDrive.LEFT_MOTOR_REGISTER, 4)
 
 
-      if (MotorID == mbits_maqueen_drive.Motor_Left):
+      if (MotorID == MaqueenDrive.Motor_Left):
         if ((round(buf[1]) < 20) and (round(buf[1]) != 0)):
           speed = round(buf[1]) + 255
 
-      elif (motorID == mbits_maqueen_drive.Motor_Right):
+      elif (motorID == MaqueenDrive.Motor_Right):
   
           if ((round(buf[3]) < 20) and (round(buf[3]) != 0)):
             speed = round(buf[3]) + 255
@@ -198,13 +200,13 @@ class MaqueenDrive:
     def readDirection(self, motor_id:int) -> int:
 
       buf:bytes = self.i2c.readfrom_mem(
-        mbits_maqueen_drive.Maqueen_I2C_DevAddr, 
-        mbits_maqueen_drive.LEFT_MOTOR_REGISTER, 4)
+        MaqueenDrive.Maqueen_I2C_DevAddr, 
+        MaqueenDrive.LEFT_MOTOR_REGISTER, 4)
 
-      if (motor_id == mbits_maqueen_drive.Motor_Left):
+      if (motor_id == MaqueenDrive.Motor_Left):
         return buf[0];
 
-      elif (motor_id == mbits_maqueen_drive.Motor_Right):
+      elif (motor_id == MaqueenDrive.Motor_Right):
         return buf[2];
     
     

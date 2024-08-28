@@ -1,9 +1,9 @@
-FROM ros:humble
+FROM ros:jazzy
 
 RUN apt -y update
 RUN apt -y upgrade
-RUN apt install -y ros-humble-turtlesim 
-RUN apt install -y ros-humble-rqt*
+RUN apt install -y ros-jazzy-turtlesim 
+RUN apt install -y ros-jazzy-rqt*
 
 COPY ./run_teleop_key.sh /run_teleop_key.sh
 CMD bash

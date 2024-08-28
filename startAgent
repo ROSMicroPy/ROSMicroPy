@@ -8,4 +8,5 @@ if [ -z "$NET_EXISTS" ]; then
     docker network create $NET_NAME
 fi 
 
-docker run -it --rm --net=rosnet --privileged  -p 8888:8888/udp microros/micro-ros-agent:jazzy udp4 -p 8888 --verbose 4
+docker run -it --rm --net=rosnet --privileged  -p 8888:8888/udp microros/micro-ros-agent:jazzy udp4 -XXX 20  -b 16384 -p 8888 --verbose 4
+

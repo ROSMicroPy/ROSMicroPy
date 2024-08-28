@@ -1,17 +1,17 @@
-from ROSMicroPy import registerDataType, dumpDataType, registerEventSubscription, run_ROS_Stack, init_ROS_Stack, registerROSPublisher, publishMsg
-
-from rostype.Twist import Twist
-
 import gc
 import time
-import wifi
+
+from ROSMicroPy import registerDataType, dumpDataType,registerEventSubscription,
+from ROSMicroPy import run_ROS_Stack, init_ROS_Stack, registerROSPublisher, publishMsg
+from ROSMicroPy import setNodeName, setAgentIP, setAgentPort
+
+from rostype.Twist import Twist
 
 print("\r\nInit ROS Stack\r\n")
 init_ROS_Stack()
 
 print("Registgering Data Type\r\n")
 typeName = registerDataType(Twist.dataMap)
-dumpDataType(typeName)
 
 print("Registgering Event Subscription\r\n")
 pub = registerROSPublisher("turtle1/cmd_vel", typeName)

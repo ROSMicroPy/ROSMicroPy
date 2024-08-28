@@ -1,17 +1,33 @@
-![](docs/images/ROSMicroPyHeader.svg)
+<div style="width:100%">
+<table style="background-color:#FEFEF2;width:100%">
+<tr style="border:1px solid">
+  <td style="width:90%;padding-left:10px;font-size:48pt;color:black;float:left">
+    <p style="float:left;">ROSMicroPy</p>
+  </td>
+  <td>
+    <img src="./docs/images/Logo.png" height="100" style="float:right"></span>
+ </td>
+ </tr>
+ </table>
+ </div>
+<br/>
+<hr/>
 
-## ROSMicroPy
-ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment along with native Micropython type support for ROS.
+At its core ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment providing;
 
-ROSMicroPy has two goals.
-* Provide a modular platform based on the ROS robotics with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
+* An easy learning curve into ROS Robotics
+* Expandable beyond the basic configuration into the full ROS environment
+* Distributed processing
+* Providing a modular platform based on the ROS robotics platform with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
 
-* Expand on the idea of modular robotics where a robot can consist of many distributed compute modules that are organized into a single heterogenous interface using the "RollCall" protocol. The goal here is to allow robots to be assembled from many nodes, giving it more of a lego assembly feel, and having a Controller / IDE seeing all those nodes as a single robot control / programming interface.
-
-* #### [Get Started](docs/LearnMore.md)
+## Getting Started
+* #### [Install ROSMicroPy on an ESP32 device](./docs/getting-started/installl-on-esp32.md)
+* #### [Basic ROS Example](docs/getting-started/basic-example.md)
 * #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
+
+## Technical implememtation
 * #### [Learn more about MicroROS Type support](docs/implementation/typeSupport.md)
-* #### [Python Example Code](./python_example_code/README.md)
+
 
 ### Current Build Profiles supported by ROSMicroPy
 
@@ -27,7 +43,7 @@ The **LCD Controller** introduces to new modules;
 
 ***ROSMicroPy-GUI***, is a [JSON Forms](https://jsonforms.io/) renderer for LVGL that allows for a Web based GUI layout designer to produce a JSON description of a screen layout that can be saved on a ROSMicroPy device.
 
-***ROSMiicroPy-JoyCom***, is a Bluetooth HID Central Server, that makes the inputs of a JoyCon device available for the ROSMicroPy environment. 
+***ROSMiicroPy-JoyCon***, is a Bluetooth HID Central Server, that makes the inputs of a JoyCon device available for the ROSMicroPy environment. 
 
 ![](docs/images/RMP_Cam_Stack.svg)
 

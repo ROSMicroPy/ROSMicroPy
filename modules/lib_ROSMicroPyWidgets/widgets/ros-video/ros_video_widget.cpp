@@ -76,7 +76,7 @@ ros_video_widget::ros_video_widget(mpy_LvObject* parent) {
     // OPTIONALLY this struct can store rules for specific members
     // !! Using the API with rules will use dynamic memory allocations for handling strings !!
 
-    micro_ros_utilities_memory_rule_t rules[] = {
+    static micro_ros_utilities_memory_rule_t rules[] = {
         {"header.frame_id", 30},
         {"format", 4},
         {"data", 80000}};
@@ -104,8 +104,7 @@ ros_video_widget::ros_video_widget(mpy_LvObject* parent) {
 		&rcl_subscription,
 	    &img_msg,
 		&ros_video_service_callback, 
-        this,
-		ALWAYS));
+        this,ON_NEW_DATA));
 
     printf("ROS create img\r\n");
     lvObject = lv_img_create(parent->lvObject);
