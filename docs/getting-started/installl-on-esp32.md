@@ -30,12 +30,14 @@ This guide provides step-by-step instructions on how to install ROSMicroPy on an
 
 ### 1. Clone the ROSMicroPy Repository
 Begin by cloning the ROSMicroPy repository from GitHub:
+
 ```
 git clone https://github.com/ROSMicroPy/ROSMicroPy
 * Change directory to the root of the project 
 * run ./startESP32Flash
 ```
 On success you should see the following screen
+
 <img src="../images/launch_flasher_screenshot.png" width=500></img>
 
 At the command prompt type
