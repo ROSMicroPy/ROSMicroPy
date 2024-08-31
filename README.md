@@ -21,11 +21,15 @@ At its core ROSMicroPy is an integration of Micropython and MicroROS providing f
 * Providing a modular platform based on the ROS robotics platform with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
 
 ## Getting Started
-* #### [Install ROSMicroPy on an ESP32 device](./docs/getting-started/installl-on-esp32.md)
-* #### [Basic ROS Example](docs/getting-started/basic-example.md)
-* #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
+* #### [Install ROSMicroPy on an ESP32 device](./docs/getting-started/flash-code-on-device/installl-on-esp32.md)
+* #### [Basic ROS Message passing Example](docs/getting-started/basic-ros-example/basic-example.md)
+* #### [Build a ROS based Robot with Joystick Controller](./docs/getting-started/first-robot/FirstROSRobot.md)
+
+
 
 ## Technical implememtation
+* #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
+
 * #### [Learn more about MicroROS Type support](docs/implementation/typeSupport.md)
 
 

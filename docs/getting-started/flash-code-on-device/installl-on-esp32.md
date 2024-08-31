@@ -6,7 +6,7 @@
     <p style="float:left;">ROSMicroPy</p>
   </td>
   <td>
-    <img src="../images/Logo.png" height="100" style="float:right"></span>
+    <img src="../../images/Logo.png" height="100" style="float:right"></span>
  </td>
  </tr>
  </table>
@@ -38,29 +38,33 @@ git clone https://github.com/ROSMicroPy/ROSMicroPy
 ```
 On success you should see the following screen
 
-<img src="../images/launch_flasher_screenshot.png" width=500></img>
+<img src="./launch_flasher_screenshot.png" width=500></img>
 
 At the command prompt type
 
-**./flash [DEVICE_ID]**
+**./flash [DEVICE_ID] [erase]**
 
 Replace **[DEVICE_ID]** with one of the following
 
-* **rmp-core**      -> (rmp-core code for a generic ESP32 device)
-* **rmp-core-s3**   -> (rmp-core code for an ESP32-S3 device)
-* **rmp-espcam**    -> (rmp-core + espcam code for and ESP32-S device)
-* **rmp-espcam-S3** -> (rmp-core + espcam code for an ESP32-S3 'wroom1' device)
+* **rmp_core_generic**      -> (rmp-core code for a generic ESP32 device)
+* **rmp_core_s3**   -> (rmp-core code for an ESP32-S3 device)
+* **rmp_espcam_generic**    -> (rmp-core + espcam code for and ESP32-S device)
+* **rmp_espcam_s3** -> (rmp-core + espcam code for an ESP32-S3 'wroom1' device)
 * **rmp-rosco-phd** -> (rosco-phd = ROS2 Control and Observibility programmable handheld device) 
+
+If parameter #3 = "erase" then the device flash/QSPI flash will be erased to factory reset before programming. 
+
+**WARNING: ALL CONTENT WILL BE LOST with the erase Option**
 
 ## On success you should see the following screen
 
-<img src="../images/FlashTool-Screenshot.png" width=500></img>
+<img src="./FlashTool-Screenshot.png" width=500></img>
 
 ## Post Install
 * Close the terminal window.
-* On the host computer, launce Thonny and verify that the REPL prompt is present. 
+* On the host computer, launch Thonny and verify that the REPL prompt is present. 
 
-<img src="../images/Thonny-Screenshot.png" width=500/>
+<img src="../Thonny_Copy_Wifi.png" width=500/>
 
 ## Your device is now ready to be a ROS Node
 
