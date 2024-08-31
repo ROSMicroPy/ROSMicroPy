@@ -33,10 +33,14 @@ Begin by cloning the ROSMicroPy repository from GitHub:
 
 ```
 git clone https://github.com/ROSMicroPy/ROSMicroPy
-* Change directory to the root of the project 
-* run ./startESP32Flash
-```
-On success you should see the following screen
+````
+
+````
+* Change directory to the root of the project (ROSMicroPy)
+* Run ./startESP32Flash to start the container
+````
+
+#### On success you should see the following screen
 
 <img src="./launch_flasher_screenshot.png" width=500></img>
 

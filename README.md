@@ -1,3 +1,4 @@
+
 <div style="width:100%">
 <table style="background-color:#FEFEF2;width:100%">
 <tr style="border:1px solid">
@@ -13,12 +14,12 @@
 <br/>
 <hr/>
 
-At its core ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment providing;
+At its core ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment, features include;
 
-* An easy learning curve into ROS Robotics
-* Expandable beyond the basic configuration into the full ROS environment
+* Economical entry level Robotics.
+* An easier learning curve into ROS
+* Expandable beyond the basic configuration into the full ROS environment and its Modules. 
 * Distributed processing
-* Providing a modular platform based on the ROS robotics platform with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
 
 ## Getting Started
 * #### [Install ROSMicroPy on an ESP32 device](./docs/getting-started/flash-code-on-device/installl-on-esp32.md)

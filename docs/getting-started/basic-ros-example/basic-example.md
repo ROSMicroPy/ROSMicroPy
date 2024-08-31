@@ -15,9 +15,11 @@ Launch Thonny and verify the folowing settings.
 <hr/>
 
 Allow multiple instances by unchecking **Allow only a single instance**
+
 <img src="../../images/ThonnyConfig3.png" width=200/>
 
-Configure the interperter type Micropython(ESP32) and select the serial port that a device is connected too.  For both devices, you will need to launch two copies and two different ports. 
+Configure the interperter type Micropython(ESP32) and select the serial port that a device is connected too.  For both devices, you will need to launch two copies and two different ports.
+
 <img src="../../images/ThonnyConfig2.png" width=200/>
 
 
@@ -50,7 +52,11 @@ On the PC, change direectory to the project root, and enter the command
 
 ![Agent running in Container](./startAgent.png)
 
-With both ESP32 devices connected to the PC, open Thonny by right clicking the program icon and select "Edit with Thonny", set the Serial Port and verify the REPL prompt is displayed. Next, repete the action of "Edit with Thonny" which should bring up another instance of the Thonny program. Change the Port so that Thonny connects to the second device. 
+With both ESP32 devices connected to the PC, 
+* Open Thonny by right clicking the program icon and select "Edit with Thonny"
+* Set the Serial Port and verify the REPL prompt is displayed. 
+* Repete the action of "Edit with Thonny" which should bring up another instance of the Thonny program. 
+* Change the Port so that Thonny connects to the second device. 
 
 ![Thonny Loaded on two devices](./TwistedExample_InitialConnect.png)
 
