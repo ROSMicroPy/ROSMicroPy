@@ -1,9 +1,3 @@
-<style>
-    table {
-        width: 100%;
-        background-color: #FEFEF2;
-    }
-</style>
 
 <div style="width:100%">
 <table style="background-color:#FEFEF2;width:100%">
