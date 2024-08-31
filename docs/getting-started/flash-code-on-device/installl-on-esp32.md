@@ -54,7 +54,7 @@ Replace **[DEVICE_ID]** with one of the following
 * **rmp_core_s3**   -> (rmp-core code for an ESP32-S3 device)
 * **rmp_espcam_generic**    -> (rmp-core + espcam code for and ESP32-S device)
 * **rmp_espcam_s3** -> (rmp-core + espcam code for an ESP32-S3 'wroom1' device)
-* **rmp-rosco-phd** -> (rosco-phd = ROS2 Control and Observibility programmable handheld device) 
+* **rmp_rosco_phd** -> (rosco-phd = ROS2 Control and Observability programmable handheld device) 
 
 If parameter #3 = "erase" then the device flash/QSPI flash will be erased to factory reset before programming. 
 
