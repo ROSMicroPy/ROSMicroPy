@@ -4,12 +4,13 @@ echo "target: $1, erase: $2"
 echo "Current working directory: $(pwd)"
 
 export target=rmp_core_generic
+export erase_flag="erase"
 
 if [ "$1" == "$target" ]; then
     
     echo "RMP Core Generic"
 
-    if [$2 == "erase"]; then
+    if [ "$2" == "$erase_flag" ]; then
         echo "Erasing Flash"
         python /opt/esp/idf/components/esptool_py/esptool/esptool.py \
         -b 460800 --before default_reset --after hard_reset --chip esp32 erase_flash
@@ -26,7 +27,7 @@ export target="rmp_core_s3"
 if [ "$1" == "$target" ]; then
     echo "RMP Core S3"
 
-    if [ $2 == "erase" ]; then
+    if [ "$2" == "$erase_flag" ]; then
         echo "Erasing Flash"
         python /opt/esp/idf/components/esptool_py/esptool/esptool.py \
         -b 460800 --before default_reset --after hard_reset --chip esp32s3 erase_flash
