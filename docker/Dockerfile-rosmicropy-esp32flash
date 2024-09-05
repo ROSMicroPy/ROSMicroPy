@@ -29,7 +29,7 @@ RUN apt -y update && \
 WORKDIR /opt
 RUN git clone https://github.com/ROSMicroPy/ROSMicroPy.git rosmicropy
 WORKDIR /opt/rosmicropy
-RUN git checkout refresh-demo-code
+RUN git checkout main
 RUN git pull
 WORKDIR /opt/rosmicropy/release
 
