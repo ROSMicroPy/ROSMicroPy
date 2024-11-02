@@ -1,0 +1,36 @@
+FROM ros:jazzy
+
+RUN apt -y update && apt -y upgrade &&apt install -y \
+    software-properties-common \
+    build-essential \
+    cmake \
+    git \
+    ros-jazzy-turtlesim \ 
+    ros-jazzy-rqt* \
+    openjdk-8-jdk \
+    gradle && \
+    apt -yq clean
+
+#########################################################################################
+# Micro XRCE-DDS Agent Docker
+#########################################################################################
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk-amd64/"
+
+# Prepare Micro XRCE-DDS Agent workspace
+WORKDIR /opt
+RUN git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git agent
+RUN mkdir -p /opt/agent/build
+
+
+# Build Micro XRCE-DDS Agent and install
+WORKDIR /opt/agent/build
+RUN  cmake -DCMAKE_INSTALL_PREFIX=../install .. && make -j $(nproc) && make install
+
+RUN ldconfig
+
+WORKDIR /opt/ros
+
+
+CMD bash

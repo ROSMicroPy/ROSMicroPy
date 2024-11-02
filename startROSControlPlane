@@ -1,0 +1,53 @@
+#!/bin/bash
+echo Network disable is expected
+echo Edit xhost settings in this file for fine grained control
+echo this line may fail on non-linux hosts
+xhost +
+
+NET_NAME=host
+IMAGE_NAME=ros-control-plane
+NODENAME=ROSControlPlane
+
+echo $1
+if [ "$1" == "clean" ]; then
+  echo "Making a clean build"
+  echo "Stopping Node " $NODENAME
+  docker stop $NODENAME 
+  echo "Removing Node " $NODENAME
+  docker rm $NODENAME 
+  echo "Removing Image " $IMAGE_NAME
+  docker image rm $IMAGE_NAME 
+fi
+
+NET_EXISTS=$(docker network list | grep $NET_NAME )
+if [ -z "$NET_EXISTS" ]; then
+    echo "Creating Network " $NET_NAME
+    docker network create $NET_NAME
+fi
+
+DOCKER_DEF=Dockerfile.ROSControlPlane
+IMAGE_EXISTS=$(docker image list | grep $IMAGE_NAME )
+if [ -z "$IMAGE_EXISTS" ]; then
+   cd docker
+   echo "Building " $IMAGE_NAME " image"
+   docker build -t $IMAGE_NAME -f $DOCKER_DEF .
+   cd -
+fi
+
+#docker run -it --net=$NET_NAME --name=$NODENAME --privileged --env DISPLAY=unix$DISPLAY \
+# -v /tmp/.X11-unix:/tmp/.X11-unix \
+# -v /dev:/dev $IMAGE_NAME bash
+
+CONTAINER_EXISTS=$(docker ps -a | grep $NODENAME )
+echo "Container ["$CONTAINER_EXISTS"]"
+if [ ! -z "$CONTAINER_EXISTS" ]; then
+  echo "Starting Node " $NODENAME
+  docker start $NODENAME
+  docker exec -it $NODENAME bash
+else
+    docker run -it --name $NODENAME -h $NODENAME --net=$NET_NAME --privileged  \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v /dev:/dev \
+    $IMAGE_NAME \
+    bash 
+fi
