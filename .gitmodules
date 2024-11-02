@@ -2,9 +2,6 @@
 [submodule "micropython"]
 	path = micropython
 	url = https://github.com/gentijo/micropython.git
-[submodule "components/micro_ros_espidf_component"]
-	path = components/micro_ros_espidf_component
-	url = https://github.com/micro-ROS/micro_ros_espidf_component.git
 [submodule "components/jpegdec"]
 	path = components/jpegdec
 	url = https://github.com/bitbank2/JPEGDEC.git
