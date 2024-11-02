@@ -1,0 +1,30 @@
+## IDF Component Manager Manifest File
+dependencies:
+  espressif/mdns: "~1.1.0"
+  espressif/esp_tinyusb: "~1.0.0"
+
+  espressif/esp_lcd_touch_gt911: "^1.0.7~1"
+  lvgl/lvgl: "^8.3.8"
+
+  disp_backlight: 
+    path: ../../../../components/disp_backlight
+  
+  esp3d_log:
+    path: ../../../../components/esp3d_log
+
+  gt911:
+    path: ../../../../components/gt911
+
+  i2c_bus:
+    path: ../../../../components/i2c_bus
+
+  #ESP32S3_8048S050C:
+  #  path: ../../../../components/lvgl_drivers/ESP32S3_8048S050C
+  
+  micro_ros_espidf_component:
+    path: ../../../../components/micro_ros_espidf_component
+
+  joltwallet/littlefs: ">=1.14.5"
+
+  idf:
+    version: ">=5.0.4"
