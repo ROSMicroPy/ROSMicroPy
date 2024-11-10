@@ -1,0 +1,15 @@
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/rcl_action
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/action_msgs
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/unique_identifier_msgs
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/builtin_interfaces
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/rcl
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/rcutils
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/rmw
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/rosidl_runtime_c
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/rosidl_typesupport_interface
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/type_description_interfaces
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/service_msgs
+mkdir /opt/rosmicropy/components/micro_ros_espidf_component/include/rosidl_dynamic_typesupport
+mkdir -p /opt/rosmicropy/components/micro_ros_espidf_component/micro_ros_src/install/include
+mkdir -p /opt/rosmicropy/components/micro_ros_espidf_component/micro_ros_src/install/lib

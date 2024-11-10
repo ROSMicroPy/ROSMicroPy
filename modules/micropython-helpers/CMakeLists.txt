@@ -1,7 +1,7 @@
 # Component directive
 set(SOURCES "mp_helpers.c")
 set(INCLUDES .
-    ../../micropython/
+    ../../../micropython/
 )
 idf_component_register(
     SRCS ${SOURCES}
