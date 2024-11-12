@@ -1,0 +1,11 @@
+## IDF Component Manager Manifest File
+dependencies:
+  espressif/mdns: "~1.1.0"
+  espressif/esp_tinyusb: "*"
+
+  micro_ros_espidf_component:
+    path: ../../../../components/micro_ros_espidf_component
+
+
+  idf:
+    version: ">=5.0.4"

@@ -7,6 +7,7 @@ add_dependencies(libROSMicroPyESPCAM  micro_ros_espidf_component espressif/esp32
 
 get_filename_component(MICROROS_DIR ../../../../components/micro_ros_espidf_component ABSOLUTE)
 get_filename_component(MICROROS_INC_DIR ../../../../components/micro_ros_espidf_component/include ABSOLUTE)
+get_filename_component(MICROROS_INC_DIR2 ../../../../components/micro_ros_espidf_component/include/include ABSOLUTE)
 
 message("MicroRos ${MICROROS_INC_DIR}")
 get_filename_component(ESP32_CAMERA_INC_DIR ../../../../components/espressif__esp32-camera/driver/include ABSOLUTE)
@@ -36,10 +37,11 @@ message("IDF_PATH = $ENV{IDF_PATH}") # $IDF_PATH
 set (ROS_MICROPY_ESPCAM_INC  
     ${ROS_MICROPY_ESPCAM_DIR}
     ${ROS_MICROPY_ESPCAM_DIR}/server
-    ${MICROROS_INC_DIR}/std_msgs
-    ${MICROROS_INC_DIR}/sensor_msgs
-    ${MICROROS_INC_DIR}/example_interfaces   
-    ${MICROROS_INC_DIR}/rosidl_typesupport_introspection_c
+    ${MICROROS_INC_DIR}
+    ${MICROROS_INC_DIR2}
+    ${MICROROS_INC_DIR2}/rosidl_typesupport_introspection_c
+    ${MICROROS_INC_DIR2}/sensor_msgs
+    ${MICROROS_INC_DIR2}/std_msgs
     ${ESP32_CAMERA_INC_DIR}
     ${CMAKE_CURRENT_LIST_DIR}../../../components/espressif__esp32-camera/conversions/include
     ${IDF_PATH}/components/json/cJSON

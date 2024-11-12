@@ -1,4 +1,4 @@
-set(IDF_TARGET esp32c6)
+set(IDF_TARGET esp32c3)
 
 
 set(MICROPY_BOARD RMP_CORE_C6)
