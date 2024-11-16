@@ -19,7 +19,7 @@
 #include "../freenoveS3_pins.h"
 #include "../rmp_cam_common.h"
 
-#include "cJSON/cJSON.h"
+#include "cJSON.h"
 
 #define ledPin 4
 
@@ -44,30 +44,24 @@ void publish_cam_image()
 
   if (img != NULL)
   {
-    int fullImageSize = img->len;
+    int len = img->len;
     int offset = 0;
     int chunkSize = 0;
     struct timespec ts;
+    int x=0;
 
     clock_gettime(CLOCK_REALTIME, &ts);
-  
-    frame_id.
+    
+    img_msg.data.size = len;
+    img_msg.header.stamp.sec = ts.tv_sec;
+    img_msg.header.stamp.nanosec = ts.tv_nsec;
 
-    while (fullImageSize) {
-        if (fullImageSize > 1500) chunkSize=1500;
-        else chunkSize = fullImageSize;
-        fullImageSize -= chunkSize;
-        img_msg.data.size = len;
-        img_msg.header.stamp.sec = ts.tv_sec;
-        img_msg.header.stamp.nanosec = ts.tv_nsec;
+    img_msg.header.frame_id = micro_ros_string_utilities_set(img_msg.header.frame_id, "cam_frame");
+    img_msg.format = micro_ros_string_utilities_set(img_msg.format, "jpeg");
 
-        char
-        img_msg.header.frame_id = micro_ros_string_utilities_set(img_msg.header.frame_id, "cam_frame");
-        img_msg.format = micro_ros_string_utilities_set(img_msg.format, "jpeg");
-
-        memcpy(img_msg.data.data, img->buf, len);
-        RCSOFTCHECK(rcl_publish(&img_publisher, &img_msg, NULL));
-    }
+    memcpy(img_msg.data.data, img->buf, len);
+    RCSOFTCHECK(rcl_publish(&img_publisher, &img_msg, NULL));
+    
     // bool jpeg_converted = frame2jpg(img, 80, &_jpg_buf, &_jpg_buf_len);
     // if (jpeg_converted) {
     //   uint8_t (*ptr)[_jpg_buf_len];

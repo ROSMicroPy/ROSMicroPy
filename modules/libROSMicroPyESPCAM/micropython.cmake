@@ -7,36 +7,44 @@ add_dependencies(libROSMicroPyESPCAM  micro_ros_espidf_component espressif/esp32
 
 get_filename_component(MICROROS_DIR ../../../../components/micro_ros_espidf_component ABSOLUTE)
 get_filename_component(MICROROS_INC_DIR ../../../../components/micro_ros_espidf_component/include ABSOLUTE)
+get_filename_component(MICROROS_INC_DIR2 ../../../../components/micro_ros_espidf_component/include/include ABSOLUTE)
 
 message("MicroRos ${MICROROS_INC_DIR}")
 get_filename_component(ESP32_CAMERA_INC_DIR ../../../../components/espressif__esp32-camera/driver/include ABSOLUTE)
 
 get_filename_component(ROS_MICROPY_ESPCAM_DIR ../../../../modules/libROSMicroPyESPCAM ABSOLUTE)
+message("ESPCAMDIR = ${ROS_MICROPY_ESPCAM_DIR}")
+message("CMAKE_CURRENT_LIST_DIR = ${CMAKE_CURRENT_LIST_DIR}")
 
 set(RMP_SERVER_SRC 
-    ${MOD_ROS_MICROPY_ESPCAM_DIR}/server/rmp_cam_server.c
+    ${ROS_MICROPY_ESPCAM_DIR}/server/rmp_cam_server.c
 )
 
 set (RMP_PUBLISHER_SRC
-    ${MOD_ROS_MICROPY_ESPCAM_DIR}/publisher/rmp_cam_publisher.c
+    ${ROS_MICROPY_ESPCAM_DIR}/publisher/rmp_cam_publisher.c
 )
 
 set (ROS_MICROPY_ESPCAM_SRC
-    ${MOD_ROS_MICROPY_ESPCAM_DIR}/rmp_cam_main.c
-    ${MOD_ROS_MICROPY_ESPCAM_DIR}/rmp_cam_common.c
+    ${ROS_MICROPY_ESPCAM_DIR}/rmp_cam_main.c
+    ${ROS_MICROPY_ESPCAM_DIR}/rmp_cam_common.c
     ${RMP_PUBLISHER_SRC}
     #${RMP_SERVER_SRC}
 )
+message("ROS_MICROPY_ESPCAM_SRC = ${ROS_MICROPY_ESPCAM_SRC}")
+message("IDF_PATH = $ENV{IDF_PATH}") # $IDF_PATH
+
 
 set (ROS_MICROPY_ESPCAM_INC  
     ${ROS_MICROPY_ESPCAM_DIR}
     ${ROS_MICROPY_ESPCAM_DIR}/server
-    ${MICROROS_INC_DIR}/std_msgs
-    ${MICROROS_INC_DIR}/sensor_msgs
-    ${MICROROS_INC_DIR}/example_interfaces   
-    ${MICROROS_INC_DIR}/rosidl_typesupport_introspection_c
+    ${MICROROS_INC_DIR}
+    ${MICROROS_INC_DIR2}
+    ${MICROROS_INC_DIR2}/rosidl_typesupport_introspection_c
+    ${MICROROS_INC_DIR2}/sensor_msgs
+    ${MICROROS_INC_DIR2}/std_msgs
     ${ESP32_CAMERA_INC_DIR}
-    ../../../../components/espressif__esp32-camera/conversions/include
+    ${CMAKE_CURRENT_LIST_DIR}../../../components/espressif__esp32-camera/conversions/include
+    ${IDF_PATH}/components/json/cJSON
 )
 
 # Add our source files to the lib
@@ -48,7 +56,6 @@ target_sources(libROSMicroPyESPCAM INTERFACE
 target_include_directories(libROSMicroPyESPCAM INTERFACE
     ${ROS_MICROPY_ESPCAM_INC}
 )
-
 
 list(APPEND CMAKE_MODULE_PATH 
   ${MICROROS_DIR}/micro_ros_src/install/share/rosidl_default_generators/cmake/

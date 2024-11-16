@@ -24,4 +24,4 @@ if [ -z "$IMAGE_EXISTS" ]; then
    cd -
 fi
 
-docker run -it --rm --net=$NET_NAME --privileged --env DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev:/dev $IMAGE_NAME bash
+docker run -it --net=$NET_NAME --privileged --env DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev:/dev -v`pwd`:/opt/code $IMAGE_NAME bash

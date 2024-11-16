@@ -1,7 +1,7 @@
 import gc
 import time
 from ROSMicroPy import registerDataType, dumpDataType, registerEventSubscription, run_ROS_Stack, init_ROS_Stack, setNodeName, setNamespace, setAgentIP, setAgentPort
-from ROSMicroPyCAM import rmp_cam_start, rmp_cam_init
+from ROSMicroPyCAM import  rmp_cam_init, rmp_cam_start_publisher
 import wifi
 
 #setNamespace("")
@@ -18,4 +18,4 @@ rmp_cam_init()
 print("Run ROS Stack\r\n")
 run_ROS_Stack()
 
-rmp_cam_start()
+rmp_cam_start_publisher()

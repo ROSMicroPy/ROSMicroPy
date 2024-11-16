@@ -2,10 +2,12 @@
 add_library(libROSMicroPy INTERFACE)
 add_dependencies(libROSMicroPy  micro_ros_espidf_component)
 
-get_filename_component(MICROROS_INC_DIR ../../../../components/micro_ros_espidf_component/include ABSOLUTE)
+get_filename_component(MICROROS_INC_DIR ../../../../components/micro_ros_espidf_component/include/include ABSOLUTE)
 message("MicroRos ${MICROROS_INC_DIR}")
 
 get_filename_component(ROS_MICROPY_DIR ../../../../modules/libROSMicroPy ABSOLUTE)
+message("ROS Micropython ${ROS_MICROPY_DIR}")
+
 get_filename_component(MICROPY_UROS_MODULE_DIR ${ROS_MICROPY_DIR}/mp_uros_modules ABSOLUTE)
 get_filename_component(MICROPY_UROS_TYPE_SUPPORT_DIR ${ROS_MICROPY_DIR}/mp_uros_type_support ABSOLUTE)
 

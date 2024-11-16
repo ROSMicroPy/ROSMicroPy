@@ -1,27 +1,19 @@
-import esp
-import webrepl
 import network
-from ROSMicroPy import setNodeName, setAgentIP, setAgentPort
+
+wlan = network.WLAN(network.STA_IF) # create station interface
+
+wlan.active(True)       # activate the interface
+wlan.scan()             # scan for access points
+
+wlan.config('mac')      # get the interface's MAC address
+wlan.ipconfig('addr4')  # get the interface's IPv4 addresses
 
 sta_if = network.WLAN(network.STA_IF)
 if not sta_if.isconnected():
     print('connecting to network...')
     sta_if.active(True)
-    sta_if.connect('rosnet', 'MicroROSNet')
-    while not sta_if.isconnected():
-     pass
+    sta_if.connect('ECS-HOUSE-2G', 'DonGiovanni')
+    while not sta_if.isconnected():fi
+    pass
 
 print('network config:', sta_if.ifconfig())
-
-
-#webrepl.start()
-#esp.osdebug(None)
-
-import sys, select
-print("Press Enter to boot to REPL")
-i, o, e = select.select( [sys.stdin], [], [], 10 )
-if (not i):
-    #setNamespace("")
-    setAgentIP("192.168.8.100")
-    setAgentPort("8888")
- #   import RosBot_Teleop

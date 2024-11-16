@@ -29,6 +29,8 @@ At its core ROSMicroPy is an integration of Micropython and MicroROS providing f
 
 
 ## Technical implememtation
+* #### [How to compile from source code](./docs/building/build_from_source.md)
+
 * #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
 
 * #### [Learn more about MicroROS Type support](docs/implementation/typeSupport.md)
