@@ -1,3 +1,6 @@
+[submodule "modules/libMicroPy_JSONForms"]
+	path = modules/libMicroPy_JSONForms
+	url = https://github.com/gentijo/libMicroPy_JSONForms.git
 
 [submodule "micropython"]
 	path = micropython

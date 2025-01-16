@@ -17,13 +17,16 @@ message("User C Modules ${USER_C_MODULES}")
 
 get_filename_component(MAIN2_COMPONENT_DIR ${MICROPY_BOARD_DIR}/main2 ABSOLUTE)
 
-list(APPEND EXTRA_COMPONENT_DIRS
+list(APPEND COMPONENT_DIRS
     ${MAIN2_COMPONENT_DIR}
 )
 
 list(APPEND USER_C_MODULES 
     ${MODULE_DIR}/libROSMicroPy/micropython.cmake
     ${MODULE_DIR}/micropython-helpers/micropython.cmake
+    ${MODULE_DIR}/libMicroPy_JSONForms/micropython.cmake
+    ${MODULE_DIR}/lib_ROSMicroPyWidgets/micropython.cmake
+  
 )
 
 set(SDKCONFIG_DEFAULTS

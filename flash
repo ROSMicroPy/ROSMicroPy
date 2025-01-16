@@ -3,6 +3,19 @@
 echo "target: $1, erase: $2"
 echo "Current working directory: $(pwd)"
 
+if [ -z "$1" ]; then
+ echo "Flash utility"
+ echo "usage: ./flash {board} [erase]"
+ echo "erase is optional, and will erase the device before programming"
+ echo "WARNING: ERASE will erase everything, including any resident Micropython code"
+ echo "targets include"
+ echo " rmp_cam_generic"
+ echo " rmp_cam_s3"
+ echo " rmp_core_s6"
+ echo " rmp_core_generic"
+ echo " rmp_core_s3"
+ fi
+
 export target=rmp_core_generic
 export erase_flag="erase"
 
@@ -12,15 +25,14 @@ if [ "$1" == "$target" ]; then
 
     if [ "$2" == "$erase_flag" ]; then
         echo "Erasing Flash"
-        python /opt/esp/idf/components/esptool_py/esptool/esptool.py \
-        -b 460800 --before default_reset --after hard_reset --chip esp32 erase_flash
+        esptool.py -b 460800 --before default_reset --after hard_reset --chip esp32 erase_flash
     fi
 
-python /opt/esp/idf/components/esptool_py/esptool/esptool.py \
- -b 460800 --before default_reset --after hard_reset --chip esp32 \
-  write_flash --flash_mode dio --flash_size 4MB --flash_freq 40m \
-  0x1000 ./release/rmp_core_generic_bootloader.bin 0x8000 ./release/rmp_core_generic_partition-table.bin 0x10000 ./release/rmp_core_generic.bin
-
+    esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32  \
+    write_flash --flash_mode dio --flash_size 4MB --flash_freq 40m 0x1000 \
+    /opt/rosmicropy/release/rmp_core_generic_bootloader.bin 0x8000 \
+    /opt/rosmicropy/release/rmp_core_generic_partition-table.bin 0x10000 \
+    /opt/rosmicropy/release/rmp_core_generic.bin
 fi
 
 export target="rmp_core_s3"
@@ -29,13 +41,77 @@ if [ "$1" == "$target" ]; then
 
     if [ "$2" == "$erase_flag" ]; then
         echo "Erasing Flash"
-        python /opt/esp/idf/components/esptool_py/esptool/esptool.py \
-        -b 460800 --before default_reset --after hard_reset --chip esp32s3 erase_flash
+        esptool.py -b 460800 --before default_reset --after hard_reset --chip esp32s3 erase_flash
     fi
 
-    python /opt/esp/idf/components/esptool_py/esptool/esptool.py \
-    -b 460800 --before default_reset --after no_reset --chip esp32s3 \
-    write_flash  --flash_mode dio --flash_size 16MB --flash_freq 80m \
-    0x0 ./release/rmp_core_s3_bootloader.bin 0x8000 ./release/rmp_core_s3_partition-table.bin 0x10000 ./release/rmp_core_s3.bin
+    esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32s3  \
+    write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x1000 \
+    /opt/rosmicropy/release/rmp_core_s3_bootloader.bin 0x8000 \
+    /opt/rosmicropy/release/rmp_core_s3_partition-table.bin 0x10000 \
+    /opt/rosmicropy/release/rmp_core_generic.bin
 fi
 
+export target="rmp_cam_s3"
+if [ "$1" == "$target" ]; then
+    echo "RMP CAM S3"
+
+    if [ "$2" == "$erase_flag" ]; then
+        echo "Erasing Flash"
+        esptool.py -b 460800 --before default_reset --after hard_reset --chip esp32s3 erase_flash
+    fi
+
+    esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32s3  \
+    write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x1000 \
+    /opt/rosmicropy/release/rmp_cam_s3_bootloader.bin 0x8000 \
+    /opt/rosmicropy/release/rmp_cam_s3_partition-table.bin 0x10000 \
+    /opt/rosmicropy/release/rmp_cam_s3.bin
+fi
+
+export target="rmp_core_c6"
+if [ "$1" == "$target" ]; then
+    echo "RMP CAM S3"
+
+    if [ "$2" == "$erase_flag" ]; then
+        echo "Erasing Flash"
+        esptool.py -b 460800 --before default_reset --after hard_reset --chip esp32c6 erase_flash
+    fi
+
+    esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32c6  \
+    write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x1000 \
+    /opt/rosmicropy/release/rmp_cam_c6_bootloader.bin 0x8000 \
+    /opt/rosmicropy/release/rmp_cam_c6_partition-table.bin 0x10000 \
+    /opt/rosmicropy/release/rmp_cam_c6.bin
+fi
+
+export target="rmp_cam_s3"
+if [ "$1" == "$target" ]; then
+    echo "RMP CAM S3"
+
+    if [ "$2" == "$erase_flag" ]; then
+        echo "Erasing Flash"
+        esptool.py -b 460800 --before default_reset --after hard_reset --chip esp32s3 erase_flash
+    fi
+
+    esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32s3  \
+    write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x1000 \
+    /opt/rosmicropy/release/rmp_cam_s3_bootloader.bin 0x8000 \
+    /opt/rosmicropy/release/rmp_cam_s3_partition-table.bin 0x10000 \
+    /opt/rosmicropy/release/rmp_cam_s3.bin
+fi
+
+
+export target="rmp_cam_generic"
+if [ "$1" == "$target" ]; then
+    echo "RMP CAM S3"
+
+    if [ "$2" == "$erase_flag" ]; then
+        echo "Erasing Flash"
+        esptool.py -b 460800 --before default_reset --after hard_reset --chip esp32 erase_flash
+    fi
+
+    esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32  \
+    write_flash --flash_mode dio --flash_size 4MB --flash_freq 40m 0x1000 \
+    /opt/rosmicropy/release/rmp_cam_generic_bootloader.bin 0x8000 \
+    /opt/rosmicropy/release/rmp_cam_generic_partition-table.bin 0x10000 \
+    /opt/rosmicropy/release/rmp_cam_generic.bin
+fi
