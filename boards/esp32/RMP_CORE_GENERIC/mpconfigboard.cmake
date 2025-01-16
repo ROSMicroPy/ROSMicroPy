@@ -2,11 +2,17 @@ set(IDF_TARGET esp32)
 #set(IDF_TARGET esp32s3)
 set(MICROPY_BOARD RMP_WROVER_B)
 
+
 get_filename_component(BOARD_COMMON_DIR ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
-get_filename_component(MODULE_DIR ../../../../modules ABSOLUTE)
+get_filename_component(MODULE_DIR ../../../modules ABSOLUTE)
 message("Board Common Dir ${BOARD_COMMON_DIR}")
 message("Module Dir ${MODULE_DIR}")
 message("Current List Dir ${CMAKE_CURRENT_LIST_DIR}")
+
+list(APPEND USER_C_MODULES 
+    ${MODULE_DIR}/libROSMicroPy/micropython.cmake
+    ${MODULE_DIR}/micropython-helpers/micropython.cmake
+)
 
 
 set(SDKCONFIG_DEFAULTS

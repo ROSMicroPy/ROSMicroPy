@@ -24,6 +24,9 @@ list(APPEND COMPONENT_DIRS
 list(APPEND USER_C_MODULES 
     ${MODULE_DIR}/libROSMicroPy/micropython.cmake
     ${MODULE_DIR}/micropython-helpers/micropython.cmake
+    ${MODULE_DIR}/libMicroPy_JSONForms/micropython.cmake
+    ${MODULE_DIR}/lib_ROSMicroPyWidgets/micropython.cmake
+  
 )
 
 set(SDKCONFIG_DEFAULTS
