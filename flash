@@ -48,7 +48,7 @@ if [ "$1" == "$target" ]; then
     write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x1000 \
     /opt/rosmicropy/release/rmp_core_s3_bootloader.bin 0x8000 \
     /opt/rosmicropy/release/rmp_core_s3_partition-table.bin 0x10000 \
-    /opt/rosmicropy/release/rmp_core_generic.bin
+    /opt/rosmicropy/release/rmp_core_s3.bin
 fi
 
 export target="rmp_cam_s3"
