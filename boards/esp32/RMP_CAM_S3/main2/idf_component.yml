@@ -2,10 +2,10 @@
 dependencies:
   espressif/mdns: "~1.1.0"
   espressif/esp_tinyusb: "*"
-
+#  espressif/esp32-camera: "*"
 
   espressif/esp32-camera:
-    path: ../../../../components/espressif__esp32-camera
+    path: ../../../../components/esp32-camera
 
 
   micro_ros_espidf_component:
