@@ -6,8 +6,6 @@ message("Board Common Dir ${BOARD_COMMON_DIR}")
 message("Module Dir ${MODULE_DIR}")
 
 
-
-
 set(SDKCONFIG_DEFAULTS
     ${BOARD_COMMON_DIR}/sdkconfig.menuconfig
     boards/sdkconfig.base
@@ -29,12 +27,6 @@ set(SDKCONFIG_DEFAULTS
 # )
 
 
-list(APPEND USER_C_MODULES 
-    ${MODULE_DIR}/libROSMicroPy/micropython.cmake
-    ${MODULE_DIR}/libROSMicroPyESPCAM/micropython.cmake
-    ${MODULE_DIR}/micropython-helpers/micropython.cmake
-)
-
 message("User C Modules ${USER_C_MODULES}")
 
 get_filename_component(MAIN2_COMPONENT_DIR ${MICROPY_BOARD_DIR}/main2 ABSOLUTE)
@@ -43,8 +35,16 @@ list(APPEND EXTRA_COMPONENT_DIRS
     ${MAIN2_COMPONENT_DIR}
 )
 
+list(APPEND USER_C_MODULES 
+    ${MODULE_DIR}/libROSMicroPy/micropython.cmake
+    ${MODULE_DIR}/micropython-camera-API/src/micropython.cmake
+    ${MODULE_DIR}/micropython-helpers/micropython.cmake
+)
+
 message("Component Dir ${EXTRA_COMPONENT_DIRS}")
 
+
+set(ESP32_CAMERA_DIR "/opt/rosmicropy/components/esp32-camera")
 
 set(MICROPY_BOARD_VARIANT "SPIRAM_OCT")
 

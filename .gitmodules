@@ -13,3 +13,9 @@
 [submodule "components/jpegdec"]
 	path = components/jpegdec
 	url = https://github.com/bitbank2/JPEGDEC.git
+[submodule "modules/micropython-camera-API"]
+	path = modules/micropython-camera-API
+	url = https://github.com/cnadler86/micropython-camera-API.git
+[submodule "components/esp32-camera"]
+	path = components/esp32-camera
+	url = https://github.com/espressif/esp32-camera.git
