@@ -45,7 +45,7 @@ if [ "$1" == "$target" ]; then
     fi
 
     esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32s3  \
-    write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x1000 \
+    write_flash --flash_mode dio --flash_size 4MB --flash_freq 80m 0x00 \
     /opt/rosmicropy/release/rmp_core_s3_bootloader.bin 0x8000 \
     /opt/rosmicropy/release/rmp_core_s3_partition-table.bin 0x10000 \
     /opt/rosmicropy/release/rmp_core_s3.bin
@@ -77,10 +77,10 @@ if [ "$1" == "$target" ]; then
     fi
 
     esptool.py  -b 460800 --before default_reset --after hard_reset --chip esp32c6  \
-    write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x1000 \
-    /opt/rosmicropy/release/rmp_cam_c6_bootloader.bin 0x8000 \
-    /opt/rosmicropy/release/rmp_cam_c6_partition-table.bin 0x10000 \
-    /opt/rosmicropy/release/rmp_cam_c6.bin
+    write_flash --flash_mode dio --flash_size 8MB --flash_freq 80m 0x0 \
+    /opt/rosmicropy/release/rmp_core_c6_bootloader.bin 0x8000 \
+    /opt/rosmicropy/release/rmp_core_c6_partition-table.bin 0x10000 \
+    /opt/rosmicropy/release/rmp_core_c6.bin
 fi
 
 

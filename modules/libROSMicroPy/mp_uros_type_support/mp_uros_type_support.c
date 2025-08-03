@@ -112,6 +112,9 @@ typeSupportFunc(17);
 typeSupportFunc(18);
 typeSupportFunc(19);
 
+/*
+* Initialize the Type Support
+*/
 void init_mpy_ROS_TypeSupport(void)
 {
 
@@ -148,6 +151,10 @@ void init_mpy_ROS_TypeSupport(void)
   }
 }
 
+/**
+*
+*
+*/
 dxc_cb_t *findTypeByName(const char *type)
 {
 

@@ -15,13 +15,12 @@
 
 #include "mp_uros_dataTypeParser.h"
 #include "mp_uros_type_support.h"
-
+#include "mp_helpers.h"
 
 
 bool processComponent(dxc_cb_t *ctrlBlk, mp_obj_t obComponent,  bool debug, bool countOnly);
 
-mp_obj_t     getListFieldFromMap(mp_map_t *dataMap, mp_obj_t fieldName);
-const char * getStrFieldFromMap(mp_map_t *dataMap, mp_obj_t fieldName);
+
 void         populateSerDeEntries(dxi_t *component, bool debug);
 
 
@@ -138,6 +137,10 @@ bool processComponent(dxc_cb_t *ctrlBlk, mp_obj_t obComponent,  bool debug, bool
         return false;
     }
 
+    const int capicity = getIntFieldFromMap(map,  MP_OBJ_NEW_QSTR(MP_QSTR_capicity)) ;
+    const bool isSequence = getBoolFieldFromMap(map, MP_OBJ_NEW_QSTR(MP_QSTR_isSequence));
+
+
     dxi_t *component_inst = NULL;
 
     //
@@ -148,6 +151,10 @@ bool processComponent(dxc_cb_t *ctrlBlk, mp_obj_t obComponent,  bool debug, bool
 
         ctrlBlk->dxil->instructionList[ctrlBlk->index].type=(strdup(type));
         ctrlBlk->dxil->instructionList[ctrlBlk->index].name=(strdup(name));
+        ctrlBlk->dxil->instructionList[ctrlBlk->index].capicity=capicity;
+        ctrlBlk->dxil->instructionList[ctrlBlk->index].isSequence=isSequence;
+
+
         ctrlBlk->dxil->instructionList[ctrlBlk->index].islastBlk = false;
         ctrlBlk->dxil->instructionList[ctrlBlk->index].isROSType = false;
         ctrlBlk->dxil->instructionList[ctrlBlk->index].shallowComponentCount = 0;

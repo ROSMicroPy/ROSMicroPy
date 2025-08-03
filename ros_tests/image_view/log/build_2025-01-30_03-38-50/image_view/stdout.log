@@ -1,0 +1,30 @@
+running egg_info
+creating ../../build/image_view/image_view.egg-info
+writing ../../build/image_view/image_view.egg-info/PKG-INFO
+writing dependency_links to ../../build/image_view/image_view.egg-info/dependency_links.txt
+writing requirements to ../../build/image_view/image_view.egg-info/requires.txt
+writing top-level names to ../../build/image_view/image_view.egg-info/top_level.txt
+writing manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'
+reading manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'
+writing manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /opt/code/ros_tests/image_view/build/image_view/build
+creating /opt/code/ros_tests/image_view/build/image_view/build/lib
+creating /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view
+copying image_view/__init__.py -> /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view
+running install
+running install_lib
+creating /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view
+copying /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view/__init__.py -> /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view
+byte-compiling /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view/__init__.py to __init__.cpython-312.pyc
+running install_data
+creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index
+creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index
+creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index/packages
+copying resource/image_view -> /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index/packages
+copying package.xml -> /opt/code/ros_tests/image_view/install/image_view/share/image_view
+running install_egg_info
+Copying ../../build/image_view/image_view.egg-info to /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view-0.0.0-py3.12.egg-info
+running install_scripts
+writing list of installed files to '/opt/code/ros_tests/image_view/build/image_view/install.log'

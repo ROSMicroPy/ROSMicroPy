@@ -2,6 +2,9 @@
 add_library(libROSMicroPy INTERFACE)
 add_dependencies(libROSMicroPy  micro_ros_espidf_component)
 
+get_filename_component(MICROPY_MODULE_DIR ../../../../modules/ ABSOLUTE)
+message("Micropython Module ${MICROPY_MODULE_DIR}")
+
 get_filename_component(MICROROS_INC_DIR ../../../../components/micro_ros_espidf_component/include/include ABSOLUTE)
 message("MicroRos ${MICROROS_INC_DIR}")
 
@@ -42,6 +45,7 @@ set(ROS_MICROPY_INC_DIRS
     ${MICROROS_INC_DIR}/rosidl_dynamic_typesupport
     ${ROS_MICROPY_DIR}/mp_uros_modules
     ${ROS_MICROPY_DIR}/mp_uros_type_support
+    ${MICROPY_MODULE_DIR}/micropython-helpers
 )
 
 # Add our source files to the lib

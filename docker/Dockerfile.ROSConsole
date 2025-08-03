@@ -1,4 +1,5 @@
-FROM ros:jazzy
+#FROM ros:jazzy
+FROM osrf/ros:jazzy-desktop-full
 
 RUN apt -y update
 RUN apt -y upgrade

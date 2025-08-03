@@ -1,0 +1,42 @@
+[0.000000] (-) TimerEvent: {}
+[0.000470] (image_view) JobQueued: {'identifier': 'image_view', 'dependencies': OrderedDict()}
+[0.000519] (image_view) JobStarted: {'identifier': 'image_view'}
+[0.099831] (-) TimerEvent: {}
+[0.200164] (-) TimerEvent: {}
+[0.300426] (-) TimerEvent: {}
+[0.372821] (image_view) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/image_view', 'build', '--build-base', '/opt/code/ros_tests/image_view/build/image_view/build', 'install', '--record', '/opt/code/ros_tests/image_view/build/image_view/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/opt/code/ros_tests/image_view/src/image_view', 'env': {'HOSTNAME': '04623841a0b7', 'GIT_ASKPASS': '/root/.vscode-server/bin/138f619c86f1199955d53b4166bef66ef252935c/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'BROWSER': '/root/.vscode-server/bin/138f619c86f1199955d53b4166bef66ef252935c/bin/helpers/browser.sh', 'HOME': '/root', 'OLDPWD': '/opt/code/ros_tests/image_view/src', 'TERM_PROGRAM_VERSION': '1.96.0', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-37ecc6ea-00df-4911-9fe0-f98e7d6997d8.sock', 'VSCODE_GIT_ASKPASS_MAIN': '/root/.vscode-server/bin/138f619c86f1199955d53b4166bef66ef252935c/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/root/.vscode-server/bin/138f619c86f1199955d53b4166bef66ef252935c/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-7205599a-fa40-4d99-8d4f-039b85611e66.sock', '_': '/usr/bin/colcon', 'TERM': 'xterm-256color', 'PATH': '/root/.vscode-server/bin/138f619c86f1199955d53b4166bef66ef252935c/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-7205599a-fa40-4d99-8d4f-039b85611e66.sock","/root/.gnupg/S.gpg-agent"]', 'DISPLAY': 'unix:0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-dbd847c516.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-7205599a-fa40-4d99-8d4f-039b85611e66.sock', 'SHELL': '/bin/bash', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/opt/code/ros_tests/image_view/build/image_view', 'LC_ALL': 'C.UTF-8', 'COLCON': '1', 'PYTHONPATH': '/opt/code/ros_tests/image_view/build/image_view/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages:'}, 'shell': False}
+[0.400531] (-) TimerEvent: {}
+[0.486510] (image_view) StdoutLine: {'line': b'running egg_info\n'}
+[0.486786] (image_view) StdoutLine: {'line': b'creating ../../build/image_view/image_view.egg-info\n'}
+[0.490673] (image_view) StdoutLine: {'line': b'writing ../../build/image_view/image_view.egg-info/PKG-INFO\n'}
+[0.490812] (image_view) StdoutLine: {'line': b'writing dependency_links to ../../build/image_view/image_view.egg-info/dependency_links.txt\n'}
+[0.490924] (image_view) StdoutLine: {'line': b'writing requirements to ../../build/image_view/image_view.egg-info/requires.txt\n'}
+[0.491012] (image_view) StdoutLine: {'line': b'writing top-level names to ../../build/image_view/image_view.egg-info/top_level.txt\n'}
+[0.491114] (image_view) StdoutLine: {'line': b"writing manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'\n"}
+[0.499722] (image_view) StdoutLine: {'line': b"reading manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'\n"}
+[0.500224] (image_view) StdoutLine: {'line': b"writing manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'\n"}
+[0.500324] (image_view) StdoutLine: {'line': b'running build\n'}
+[0.500479] (image_view) StdoutLine: {'line': b'running build_py\n'}
+[0.500556] (-) TimerEvent: {}
+[0.500684] (image_view) StdoutLine: {'line': b'creating /opt/code/ros_tests/image_view/build/image_view/build\n'}
+[0.500774] (image_view) StdoutLine: {'line': b'creating /opt/code/ros_tests/image_view/build/image_view/build/lib\n'}
+[0.500839] (image_view) StdoutLine: {'line': b'creating /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view\n'}
+[0.500905] (image_view) StdoutLine: {'line': b'copying image_view/__init__.py -> /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view\n'}
+[0.500970] (image_view) StdoutLine: {'line': b'running install\n'}
+[0.505058] (image_view) StdoutLine: {'line': b'running install_lib\n'}
+[0.509484] (image_view) StdoutLine: {'line': b'creating /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view\n'}
+[0.509626] (image_view) StdoutLine: {'line': b'copying /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view/__init__.py -> /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view\n'}
+[0.509942] (image_view) StdoutLine: {'line': b'byte-compiling /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view/__init__.py to __init__.cpython-312.pyc\n'}
+[0.510094] (image_view) StdoutLine: {'line': b'running install_data\n'}
+[0.510201] (image_view) StdoutLine: {'line': b'creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index\n'}
+[0.510294] (image_view) StdoutLine: {'line': b'creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index\n'}
+[0.510386] (image_view) StdoutLine: {'line': b'creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index/packages\n'}
+[0.510475] (image_view) StdoutLine: {'line': b'copying resource/image_view -> /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index/packages\n'}
+[0.510567] (image_view) StdoutLine: {'line': b'copying package.xml -> /opt/code/ros_tests/image_view/install/image_view/share/image_view\n'}
+[0.510655] (image_view) StdoutLine: {'line': b'running install_egg_info\n'}
+[0.515937] (image_view) StdoutLine: {'line': b'Copying ../../build/image_view/image_view.egg-info to /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view-0.0.0-py3.12.egg-info\n'}
+[0.516429] (image_view) StdoutLine: {'line': b'running install_scripts\n'}
+[0.560022] (image_view) StdoutLine: {'line': b"writing list of installed files to '/opt/code/ros_tests/image_view/build/image_view/install.log'\n"}
+[0.580277] (image_view) CommandEnded: {'returncode': 0}
+[0.589450] (image_view) JobEnded: {'identifier': 'image_view', 'rc': 0}
+[0.589765] (-) EventReactorShutdown: {}
