@@ -50,8 +50,11 @@ ros_publisher_t    *g_ros_publishers;
 
 /**
  *
- *
- *
+ * Create a new Subscription
+ * eventName = Topic Name
+ * eventType = the type strcture that defines the message that will be received.
+ *  The EventType is the name of the type returned when registering the type.
+ * eventCallback = the callback function that will be called when a message is received. 
  */
 mp_obj_t registerEventSubscription(
     mp_obj_t eventName,
@@ -60,6 +63,7 @@ mp_obj_t registerEventSubscription(
 
     int cnt = ros_subscription_slots;
 
+    // Input validation
     if (&mp_type_str != mp_obj_get_type(eventType)) {
 		mp_raise_TypeError(MP_ERROR_TEXT("Event type must be of type str"));
         return mp_const_none;
@@ -71,6 +75,8 @@ mp_obj_t registerEventSubscription(
         return mp_const_none;
 	}
 
+    // Look up the Type registration by Name, if there is no entry
+    // then the type has not been registered.
     dxc_cb_t* type_CtrlBlk = findTypeByName(cstr_eventType);
 
     if (type_CtrlBlk == NULL) {
@@ -89,7 +95,7 @@ mp_obj_t registerEventSubscription(
         return mp_const_none;
     }
 
-
+    //
     // Find first available subscription slot.
     //
     for (int x = 0; x < cnt; x++)

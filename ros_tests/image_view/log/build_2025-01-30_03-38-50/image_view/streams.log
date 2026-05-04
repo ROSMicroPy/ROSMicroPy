@@ -1,0 +1,32 @@
+[0.373s] Invoking command in '/opt/code/ros_tests/image_view/src/image_view': PYTHONPATH=/opt/code/ros_tests/image_view/build/image_view/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_view build --build-base /opt/code/ros_tests/image_view/build/image_view/build install --record /opt/code/ros_tests/image_view/build/image_view/install.log --single-version-externally-managed install_data
+[0.486s] running egg_info
+[0.486s] creating ../../build/image_view/image_view.egg-info
+[0.490s] writing ../../build/image_view/image_view.egg-info/PKG-INFO
+[0.490s] writing dependency_links to ../../build/image_view/image_view.egg-info/dependency_links.txt
+[0.490s] writing requirements to ../../build/image_view/image_view.egg-info/requires.txt
+[0.491s] writing top-level names to ../../build/image_view/image_view.egg-info/top_level.txt
+[0.491s] writing manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'
+[0.499s] reading manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'
+[0.500s] writing manifest file '../../build/image_view/image_view.egg-info/SOURCES.txt'
+[0.500s] running build
+[0.500s] running build_py
+[0.500s] creating /opt/code/ros_tests/image_view/build/image_view/build
+[0.500s] creating /opt/code/ros_tests/image_view/build/image_view/build/lib
+[0.500s] creating /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view
+[0.500s] copying image_view/__init__.py -> /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view
+[0.500s] running install
+[0.505s] running install_lib
+[0.509s] creating /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view
+[0.509s] copying /opt/code/ros_tests/image_view/build/image_view/build/lib/image_view/__init__.py -> /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view
+[0.509s] byte-compiling /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view/__init__.py to __init__.cpython-312.pyc
+[0.510s] running install_data
+[0.510s] creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index
+[0.510s] creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index
+[0.510s] creating /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index/packages
+[0.510s] copying resource/image_view -> /opt/code/ros_tests/image_view/install/image_view/share/ament_index/resource_index/packages
+[0.510s] copying package.xml -> /opt/code/ros_tests/image_view/install/image_view/share/image_view
+[0.510s] running install_egg_info
+[0.515s] Copying ../../build/image_view/image_view.egg-info to /opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages/image_view-0.0.0-py3.12.egg-info
+[0.516s] running install_scripts
+[0.560s] writing list of installed files to '/opt/code/ros_tests/image_view/build/image_view/install.log'
+[0.580s] Invoked command in '/opt/code/ros_tests/image_view/src/image_view' returned '0': PYTHONPATH=/opt/code/ros_tests/image_view/build/image_view/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/opt/code/ros_tests/image_view/install/image_view/lib/python3.12/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_view build --build-base /opt/code/ros_tests/image_view/build/image_view/build install --record /opt/code/ros_tests/image_view/build/image_view/install.log --single-version-externally-managed install_data

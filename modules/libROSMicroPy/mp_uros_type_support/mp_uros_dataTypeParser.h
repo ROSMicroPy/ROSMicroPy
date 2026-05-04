@@ -31,6 +31,8 @@ struct dataXferInst {
     bool islastBlk;
     bool isROSType;
     int  shallowComponentCount;
+    bool isSequence;
+    int  capicity;
 
     void (*deserialize) (ucdrBuffer *cdr,   dxi_t* inst, mp_obj_stk_t *obj_stack);
     void (*serialize)   (ucdrBuffer *cdr,  mp_obj_t value, dxi_t* inst);

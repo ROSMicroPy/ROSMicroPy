@@ -5,7 +5,7 @@ add_library(micropython-helpers INTERFACE)
 get_filename_component(MP_HELPERS_DIR ../../../../modules/micropython-helpers  ABSOLUTE)
 
 set (MP_HELPERS_SRC
-    ${MP_HELPERS_DIR}/mp_helpers.c
+    ${MP_HELPERS_DIR}/mp_helpers.cpp
 
 )
 
