@@ -28,7 +28,7 @@ RUN apt -y update && \
 	    locales lsb-release \
         sudo gosu
 
-RUN pip3 install mpremote
+#RUN pip3 install mpremote
 
 RUN locale-gen en_US en_US.UTF-8 
 RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
