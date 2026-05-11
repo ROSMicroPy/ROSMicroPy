@@ -1,0 +1,68 @@
+#FROM ubuntu:22.04
+#FROM ubuntu:focal
+FROM espressif/idf:release-v5.5
+
+ENV DEBIAN_FRONTEND=noninteractive 
+
+#ENV LC_ALL en_US.UTF-8
+#ENV LANG en_US.UTF-8
+#ENV LANGUAGE en_US.UTF-8
+
+ARG TZ_ARG=UTC
+ENV TZ=$TZ_ARG
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt -yq update
+RUN apt -yq upgrade
+RUN apt -yq clean 
+
+RUN apt -y update && \
+    apt -y upgrade && \
+    apt -y install \
+        build-essential \
+	    python3 pip \
+        emacs nano curl gnupg \
+        cmake git zip \
+        python3-libusb1 \
+        gdb gdbserver \
+	    locales lsb-release \
+        sudo gosu
+
+#RUN pip3 install mpremote --break-system-packages
+
+RUN locale-gen en_US en_US.UTF-8 
+RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+
+#RUN pip3 install -U \
+#    argcomplete \
+#    flake8 \
+#    flake8-blind-except \
+#    flake8-builtins \
+#    flake8-class-newline \
+#    flake8-comprehensions \
+#    flake8-deprecated \
+#    flake8-docstrings \
+#    flake8-import-order \
+#    flake8-quotes \
+#    pytest-repeat \
+#    pytest-rerunfailures \
+#    catkin_pkg \
+#    lark-parser empy \
+#    colcon-common-extensions \
+#    importlib-resources
+
+COPY ./install_micro_ros_deps_script.sh /install_micro_ros_deps_script.sh
+
+RUN mkdir -p /tmp/install_micro_ros_deps_script && mv /install_micro_ros_deps_script.sh /tmp/install_micro_ros_deps_script/ && \
+    IDF_EXPORT_QUIET=1 /tmp/install_micro_ros_deps_script/install_micro_ros_deps_script.sh && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY ./pip-requirments.txt /pip-requirments.txt
+#RUN pip3 install -r pip-requirments.txt --break-system-packages
+
+RUN echo ". /opt/esp/idf/export.sh " >> ~/.bashrc
+COPY ./.gitconfig /root/.gitconfig
+
+WORKDIR /opt/rosmicropy
+#RUN git submodule init
+#RUN git submodule update --recursive
