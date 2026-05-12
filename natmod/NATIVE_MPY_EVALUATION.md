@@ -27,6 +27,16 @@ Build for ESP32-S3:
 
 The default target is `esp32s3`. The MicroPython native architecture remains
 `xtensawin`, and the build uses `xtensa-esp32s3-elf-gcc` when available.
+The full implementation build requires generated micro-ROS assets:
+
+```sh
+./natmod/prepare_microros.sh
+./natmod/build_native_mpy.sh
+```
+
+`prepare_microros.sh` runs `micro_ros_espidf_component/libmicroros.mk`, which
+creates `natmod/micro_ros_espidf_component/include` and
+`natmod/micro_ros_espidf_component/libmicroros.a`.
 
 To build for another ESP target:
 

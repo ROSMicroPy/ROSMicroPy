@@ -5,7 +5,7 @@ add_dependencies(libROSMicroPy  micro_ros_espidf_component)
 get_filename_component(NATMOD_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 get_filename_component(REPO_ROOT "${NATMOD_DIR}/.." ABSOLUTE)
 
-get_filename_component(MICROROS_INC_DIR "${NATMOD_DIR}/micro_ros_espidf_component/include/include" ABSOLUTE)
+get_filename_component(MICROROS_INC_DIR "${NATMOD_DIR}/micro_ros_espidf_component/include" ABSOLUTE)
 message("MicroRos ${MICROROS_INC_DIR}")
 
 get_filename_component(ROS_MICROPY_DIR "${NATMOD_DIR}/libROSMicroPy" ABSOLUTE)
@@ -13,6 +13,7 @@ message("ROS Micropython ${ROS_MICROPY_DIR}")
 
 get_filename_component(MICROPY_UROS_MODULE_DIR ${ROS_MICROPY_DIR}/mp_uros_modules ABSOLUTE)
 get_filename_component(MICROPY_UROS_TYPE_SUPPORT_DIR ${ROS_MICROPY_DIR}/mp_uros_type_support ABSOLUTE)
+get_filename_component(MICROPY_HELPERS_DIR "${NATMOD_DIR}/micropython-helpers" ABSOLUTE)
 
 set(ROS_MICROPY_MODULES
     #
@@ -26,27 +27,23 @@ set(ROS_MICROPY_MODULES
 
     ${MICROPY_UROS_TYPE_SUPPORT_DIR}/mp_uros_type_support.c
     ${MICROPY_UROS_TYPE_SUPPORT_DIR}/mp_uros_dataTypeParser.c
-    ${MICROPY_UROS_TYPE_SUPPORT_DIR}/mp_uros_type_support_functions.c
+    ${MICROPY_HELPERS_DIR}/mp_helpers.cpp
 
 )
 
+set(MICROROS_INC_DIRS ${MICROROS_INC_DIR})
+file(GLOB MICROROS_PACKAGE_INCLUDE_CANDIDATES LIST_DIRECTORIES true "${MICROROS_INC_DIR}/*")
+foreach(include_dir ${MICROROS_PACKAGE_INCLUDE_CANDIDATES})
+    if(IS_DIRECTORY "${include_dir}")
+        list(APPEND MICROROS_INC_DIRS "${include_dir}")
+    endif()
+endforeach()
+
 set(ROS_MICROPY_INC_DIRS
-    ${MICROROS_INC_DIR}
-    ${MICROROS_INC_DIR}/rcl_action
-    ${MICROROS_INC_DIR}/action_msgs
-    ${MICROROS_INC_DIR}/unique_identifier_msgs
-    ${MICROROS_INC_DIR}/builtin_interfaces
-    ${MICROROS_INC_DIR}/rcl
-    ${MICROROS_INC_DIR}/rcutils
-    ${MICROROS_INC_DIR}/rmw
-    ${MICROROS_INC_DIR}/rosidl_runtime_c
-    ${MICROROS_INC_DIR}/rosidl_typesupport_interface
-    ${MICROROS_INC_DIR}/type_description_interfaces
-    ${MICROROS_INC_DIR}/service_msgs
-    ${MICROROS_INC_DIR}/rosidl_dynamic_typesupport
+    ${MICROROS_INC_DIRS}
     ${ROS_MICROPY_DIR}/mp_uros_modules
     ${ROS_MICROPY_DIR}/mp_uros_type_support
-    ${NATMOD_DIR}/micropython-helpers
+    ${MICROPY_HELPERS_DIR}
 )
 
 # Add our source files to the lib

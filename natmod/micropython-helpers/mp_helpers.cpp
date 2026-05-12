@@ -1,5 +1,5 @@
 #include "mp_helpers.h"
-#include <sstream>
+#include <strings.h>
 
 mp_map_elem_t* getElementFromMap(mp_map_t *dataMap, mp_obj_t fieldName) {
 
@@ -89,10 +89,8 @@ bool getBoolFieldFromMap(mp_map_t *dataMap, mp_obj_t fieldName) {
 
     mp_obj_t obField = obElem->value;
     if (&mp_type_str == mp_obj_get_type(obField)) {
-        bool val;
-        std::stringstream ss(mp_obj_str_get_str(obField));
-        ss >> std::boolalpha >> val;
-        return val;
+        const char *value = mp_obj_str_get_str(obField);
+        return strcasecmp(value, "true") == 0 || strcmp(value, "1") == 0;
     }
 
     if (&mp_type_int == mp_obj_get_type(obField)) {

@@ -24,13 +24,19 @@ rmw_init_options_t *rmw_options;
 rcl_timer_t       	main_timer;
 
 size_t				rmp_domain_id = DOMAIN_ID;
-char				rmp_node_name[64] = "turtle2";
+char				rmp_node_name[64];
 char				rmp_namespace[64] = "";
 
 
-char				ROS_AgentIP[64] = "192.168.8.100"; //CONFIG_MICRO_ROS_AGENT_IP;
-char				ROS_AgentPort[64] = "8888"; //CONFIG_MICRO_ROS_AGENT_PORT;
+char				ROS_AgentIP[64]; //CONFIG_MICRO_ROS_AGENT_IP;
+char				ROS_AgentPort[64]; //CONFIG_MICRO_ROS_AGENT_PORT;
 
+static void init_default_string(char *dest, size_t dest_size, const char *default_value) {
+	if (dest[0] == '\0') {
+		strncpy(dest, default_value, dest_size - 1);
+		dest[dest_size - 1] = '\0';
+	}
+}
 
 /** 
  * 
@@ -50,6 +56,7 @@ mp_obj_t setAgentIP(mp_obj_t obj_in)
     }
 
 	strncpy(ROS_AgentIP, cstr, 63);
+	ROS_AgentIP[63] = '\0';
 	return obj_in;
 }
 
@@ -71,6 +78,7 @@ mp_obj_t setAgentPort(mp_obj_t obj_in)
     }
 
 	strncpy(ROS_AgentPort, cstr, 63);
+	ROS_AgentPort[63] = '\0';
 	return obj_in;
 }
 
@@ -111,6 +119,7 @@ mp_obj_t setNamespace(mp_obj_t obj_in)
     }
 
 	strncpy(rmp_namespace, cstr, 63);
+	rmp_namespace[63] = '\0';
 	return obj_in;
 }
 
@@ -132,6 +141,7 @@ mp_obj_t setNodeName(mp_obj_t obj_in)
     }
 
 	strncpy(rmp_node_name, cstr, 63);
+	rmp_node_name[63] = '\0';
 
 	return obj_in;
 }
@@ -150,8 +160,11 @@ mp_obj_t init_ROS_Stack()
     printf("\r\nInitializing ROS Stack\r\n");
 
     init_ROS_Subscriptions();
-	init_ROS_Publishers();
+    init_ROS_Publishers();
     init_mpy_ROS_TypeSupport();
+	init_default_string(rmp_node_name, sizeof(rmp_node_name), "turtle2");
+	init_default_string(ROS_AgentIP, sizeof(ROS_AgentIP), "192.168.8.100");
+	init_default_string(ROS_AgentPort, sizeof(ROS_AgentPort), "8888");
 
 	rmp_rcl_allocator = rcl_get_default_allocator();
 

@@ -4,7 +4,7 @@ dependencies:
 #  espressif/esp_tinyusb: "*"
 
   micro_ros_espidf_component:
-    path: /opt/rosmicropy/components/micro_ros_espidf_component
+    path: /opt/rosmicropy/natmod/micro_ros_espidf_component
 
 
   idf:

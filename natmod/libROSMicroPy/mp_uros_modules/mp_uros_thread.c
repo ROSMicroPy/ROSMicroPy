@@ -1,6 +1,7 @@
 
 #include "mp_uros_thread.h"
 #include "uros_base_func.h"
+#include "py/mpthread.h"
 
 #include "sdkconfig.h"
 
@@ -103,5 +104,4 @@ void *ros_thread_entry(void *args_in)
 
     return NULL;
 }
-
 

@@ -76,7 +76,7 @@ size_t mpy_uros_ts0_get_max_serialized_size(bool *full_bounded, size_t current_a
                                                                                                                                        \
   dxc_cb_t *typeSupportCtrlBlk_##n = malloc(sizeof(dxc_cb_t));                                                                         \
                                                                                                                                        \
-  typeSupportCtrlBlk_##n->ros_mesg_type_support = malloc(sizeof(rosidl_message_type_support_t));                                       \                                                                                                                                     
+  typeSupportCtrlBlk_##n->ros_mesg_type_support = malloc(sizeof(rosidl_message_type_support_t));                                       \
   /* The DXIL will be allocated when a type is registered */                                                                           \
       message_type_support_callbacks_t *mpy_uros_ts##n##_cb = malloc(sizeof(message_type_support_callbacks_t));                        \
                                                                                                                                        \
@@ -231,7 +231,6 @@ bool mpy_uros_typesupport_cdr_serialize(int slot, const void *untyped_ros_messag
     }
     else
     {
-      const char *type = mp_obj_get_type_str(value);
       instruction->serialize(cdr, value, instruction);
     }
 

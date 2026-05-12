@@ -180,12 +180,12 @@ void add_ROS_Service_Listener(ros_subscription* sub) {
 void service_callback(const void *response, void *context) {
     printf("in Service callback\r\n");
 
-    const void **mp_data = response;
+    const mp_obj_t *mp_data = (const mp_obj_t *)response;
     ros_subscription* ros_sub = (ros_subscription *)context;
 
     MP_THREAD_GIL_ENTER();
     // mp_obj_t data = createObjFromThread();
-    mp_call_function_1(ros_sub->mpEventCallback, *mp_data);
+    mp_call_function_1(ros_sub->mpEventCallback, (mp_obj_t)*mp_data);
     MP_THREAD_GIL_EXIT();
 }
 
