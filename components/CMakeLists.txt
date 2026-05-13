@@ -50,6 +50,7 @@ set(MPY_CROSS "${MPY_DIR}/mpy-cross/build/mpy-cross")
 set(MPY_TOOL_PYTHONPATH "${MPY_DIR}/tools:${MPY_DIR}/py:$ENV{PYTHONPATH}")
 set(MICROROS_INCLUDE_DIR "${NATMOD_MICROROS_DIR}/include" CACHE PATH "Path to generated micro-ROS headers")
 set(MICROROS_LIB "${NATMOD_MICROROS_DIR}/libmicroros.a" CACHE FILEPATH "Path to generated libmicroros archive")
+option(ROSMICROPY_EMBED_MICROROS_ARCHIVE "Embed libmicroros.a into the native .mpy instead of resolving micro-ROS symbols from firmware" OFF)
 set(MPY_EXTERNS_FILE "" CACHE FILEPATH "Optional linker script with fixed-address firmware symbols for native .mpy linking")
 
 if(NOT EXISTS "${MPY_LD}")
@@ -236,7 +237,7 @@ if(NOT EXISTS "${MICROROS_INCLUDE_DIR}/rcl/rcl.h" AND NOT EXISTS "${MICROROS_INC
         "rcl headers and libmicroros.a, or pass -DMICROROS_INCLUDE_DIR=/path/to/include."
     )
 endif()
-if(NOT EXISTS "${MICROROS_LIB}")
+if(ROSMICROPY_EMBED_MICROROS_ARCHIVE AND NOT EXISTS "${MICROROS_LIB}")
     message(FATAL_ERROR
         "Generated micro-ROS library was not found at ${MICROROS_LIB}. "
         "Build or prepare natmod/micro_ros_espidf_component first, or pass "
@@ -289,6 +290,11 @@ set(MPY_CXXFLAGS
 )
 list(REMOVE_ITEM MPY_CXXFLAGS -std=gnu11)
 
+set(MICROROS_LINK_INPUTS)
+if(ROSMICROPY_EMBED_MICROROS_ARCHIVE)
+    list(APPEND MICROROS_LINK_INPUTS "${MICROROS_LIB}")
+endif()
+
 add_custom_command(
     OUTPUT "${CONFIG_H}"
     COMMAND "${CMAKE_COMMAND}" -E env "PYTHONPATH=${MPY_TOOL_PYTHONPATH}" "${Python3_EXECUTABLE}" "${MPY_LD}" --arch "${MPY_ARCH}" --preprocess -o "${CONFIG_H}" ${NATIVE_SRC}
@@ -320,9 +326,9 @@ endforeach()
 
 add_custom_command(
     OUTPUT "${COMBINED_OBJ}"
-    COMMAND "${MPY_CXX}" ${MPY_ARCH_FLAGS} -r -o "${COMBINED_OBJ}" ${NATIVE_OBJ} "${MICROROS_LIB}"
-    DEPENDS "${NATIVE_OBJ}" "${MICROROS_LIB}"
-    COMMENT "Combining ROSMicroPy objects with libmicroros"
+    COMMAND "${MPY_CXX}" ${MPY_ARCH_FLAGS} -r -o "${COMBINED_OBJ}" ${NATIVE_OBJ} ${MICROROS_LINK_INPUTS}
+    DEPENDS "${NATIVE_OBJ}" ${MICROROS_LINK_INPUTS}
+    COMMENT "Combining ROSMicroPy native objects"
     VERBATIM
 )
 

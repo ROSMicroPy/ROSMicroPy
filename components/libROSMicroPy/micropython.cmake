@@ -1,19 +1,20 @@
 # Create an INTERFACE library for our C module.
 add_library(libROSMicroPy INTERFACE)
-add_dependencies(libROSMicroPy  micro_ros_espidf_component)
 
-get_filename_component(NATMOD_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
-get_filename_component(REPO_ROOT "${NATMOD_DIR}/.." ABSOLUTE)
+get_filename_component(ROSMICROPY_COMPONENTS_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+get_filename_component(REPO_ROOT "${ROSMICROPY_COMPONENTS_DIR}/.." ABSOLUTE)
 
-get_filename_component(MICROROS_INC_DIR "${NATMOD_DIR}/micro_ros_espidf_component/include" ABSOLUTE)
-message("MicroRos ${MICROROS_INC_DIR}")
+get_filename_component(MICROROS_COMPONENT_DIR "${ROSMICROPY_COMPONENTS_DIR}/micro_ros_espidf_component" ABSOLUTE)
+get_filename_component(MICROROS_INC_DIR "${MICROROS_COMPONENT_DIR}/include" ABSOLUTE)
+message("micro-ROS component ${MICROROS_COMPONENT_DIR}")
+message("micro-ROS include ${MICROROS_INC_DIR}")
 
-get_filename_component(ROS_MICROPY_DIR "${NATMOD_DIR}/libROSMicroPy" ABSOLUTE)
-message("ROS Micropython ${ROS_MICROPY_DIR}")
+get_filename_component(ROS_MICROPY_DIR "${ROSMICROPY_COMPONENTS_DIR}/libROSMicroPy" ABSOLUTE)
+message("ROSMicroPy ${ROS_MICROPY_DIR}")
 
 get_filename_component(MICROPY_UROS_MODULE_DIR ${ROS_MICROPY_DIR}/mp_uros_modules ABSOLUTE)
 get_filename_component(MICROPY_UROS_TYPE_SUPPORT_DIR ${ROS_MICROPY_DIR}/mp_uros_type_support ABSOLUTE)
-get_filename_component(MICROPY_HELPERS_DIR "${NATMOD_DIR}/micropython-helpers" ABSOLUTE)
+get_filename_component(MICROPY_HELPERS_DIR "${ROSMICROPY_COMPONENTS_DIR}/micropython-helpers" ABSOLUTE)
 
 set(ROS_MICROPY_MODULES
     #
@@ -27,7 +28,6 @@ set(ROS_MICROPY_MODULES
 
     ${MICROPY_UROS_TYPE_SUPPORT_DIR}/mp_uros_type_support.c
     ${MICROPY_UROS_TYPE_SUPPORT_DIR}/mp_uros_dataTypeParser.c
-    ${MICROPY_HELPERS_DIR}/mp_helpers.cpp
 
 )
 
@@ -58,3 +58,12 @@ target_include_directories(libROSMicroPy INTERFACE
 
 # Link our INTERFACE library to the usermod target.
 target_link_libraries(usermod INTERFACE libROSMicroPy)
+
+if(TARGET micropython-helpers)
+    target_link_libraries(libROSMicroPy INTERFACE micropython-helpers)
+endif()
+
+if(TARGET micro_ros_espidf_component)
+    add_dependencies(libROSMicroPy micro_ros_espidf_component)
+    target_link_libraries(usermod INTERFACE micro_ros_espidf_component)
+endif()

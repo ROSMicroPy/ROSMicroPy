@@ -2,19 +2,19 @@ set(IDF_TARGET esp32s3)
 set(MICROPY_BOARD RMP_CORE_S3)
 
 get_filename_component(BOARD_COMMON_DIR ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
-get_filename_component(MODULE_DIR ../../../natmod ABSOLUTE)
+get_filename_component(COMPONENTS_DIR ../../../components ABSOLUTE)
 message("Board Common Dir ${BOARD_COMMON_DIR}")
-message("Module Dir ${MODULE_DIR}")
+message("Components Dir ${COMPONENTS_DIR}")
 
 list(APPEND USER_C_MODULES 
-    ${MODULE_DIR}/libROSMicroPy/micropython.cmake
+    ${COMPONENTS_DIR}/micropython-helpers/micropython.cmake
+    ${COMPONENTS_DIR}/libROSMicroPy/micropython.cmake
 )
 
 
 set(SDKCONFIG_DEFAULTS
     boards/sdkconfig.base
     ${SDKCONFIG_IDF_VERSION_SPECIFIC}
-    boards/sdkconfig.ble
     boards/sdkconfig.spiram_sx
     ${CMAKE_CURRENT_LIST_DIR}/sdkconfig.board
 )

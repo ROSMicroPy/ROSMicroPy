@@ -101,8 +101,8 @@ make -C "${component_dir}" -f libmicroros.mk \
     X_CXX="${cxx}" \
     X_AR="${AR:-${cc/gcc/ar}}" \
     X_STRIP="${STRIP:-${cc/gcc/strip}}" \
-    X_CFLAGS="-Os -ffunction-sections -fdata-sections -DIDF_VER=\\\"natmod\\\"" \
-    X_CXXFLAGS="-Os -ffunction-sections -fdata-sections -DIDF_VER=\\\"natmod\\\"" \
+    X_CFLAGS="-Os -ffunction-sections -fdata-sections -DIDF_VER=\\\"rosmicropy-components\\\"" \
+    X_CXXFLAGS="-Os -ffunction-sections -fdata-sections -DIDF_VER=\\\"rosmicropy-components\\\"" \
     C_STANDARD=17 \
     MIDDLEWARE="${MIDDLEWARE:-microxrcedds}" \
     BUILD_DIR="${build_dir}" \

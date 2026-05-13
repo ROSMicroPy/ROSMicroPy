@@ -2,6 +2,6 @@
 	path = micropython
 	url = https://github.com/micropython/micropython.git
 
-[submodule "natmod/micro_ros_espidf_component"]
-	path = natmod/micro_ros_espidf_component
+[submodule "components/micro_ros_espidf_component"]
+	path = components/micro_ros_espidf_component
 	url = https://github.com/micro-ROS/micro_ros_espidf_component.git
