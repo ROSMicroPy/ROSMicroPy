@@ -12,6 +12,7 @@ cd /opt/rosmicropy/
 sh mkdirs.sh
 cd -
 
+/opt/rosmicropy/components/prepare_microros.sh
 idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_GENERIC build
 cp build/micropython.bin /opt/rosmicropy/release/rmp_core_generic.bin
 cp build/micropython.elf /opt/rosmicropy/release/rmp_core_generic.elf

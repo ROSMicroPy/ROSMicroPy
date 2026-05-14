@@ -9,6 +9,7 @@ cd /opt/rosmicropy/
 sh ./mkdirs.sh
 cd -
 
+/opt/rosmicropy/components/prepare_microros.sh
 idf.py -DDEBUG=yes -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_S3 build
 
 cp build/micropython.bin /opt/rosmicropy/release/rmp_core_s3.bin
