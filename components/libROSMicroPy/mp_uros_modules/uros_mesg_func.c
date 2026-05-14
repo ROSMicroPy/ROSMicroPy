@@ -8,6 +8,7 @@
 
 #include "py/runtime.h"
 #include "py/obj.h"
+#include "py/mpstate.h"
 
 #include "rcl/rcl.h"
 #include "rcl/error_handling.h"
@@ -104,6 +105,7 @@ mp_obj_t registerEventSubscription(
         {
             g_ros_subscriptions[x].eventName = strdup(cstr_eventName);
             g_ros_subscriptions[x].mpEventCallback = eventCallback;
+            MP_STATE_PORT(rosmicropy_subscription_callbacks)[x] = eventCallback;
             g_ros_subscriptions[x].dataTypeCtrlBlk = type_CtrlBlk;
 
             g_ros_subscriptions[x].inUse = true;
@@ -139,6 +141,7 @@ void init_ROS_Subscriptions() {
 
     for (int x=0; x<ros_subscription_slots; x++) {
         g_ros_subscriptions[x].inUse = false;
+        MP_STATE_PORT(rosmicropy_subscription_callbacks)[x] = MP_OBJ_NULL;
     };
 }
 
@@ -183,10 +186,8 @@ void service_callback(const void *response, void *context) {
     const mp_obj_t *mp_data = (const mp_obj_t *)response;
     ros_subscription* ros_sub = (ros_subscription *)context;
 
-    MP_THREAD_GIL_ENTER();
     // mp_obj_t data = createObjFromThread();
     mp_call_function_1(ros_sub->mpEventCallback, (mp_obj_t)*mp_data);
-    MP_THREAD_GIL_EXIT();
 }
 
 
@@ -268,7 +269,7 @@ mp_obj_t  registerROSPublisher(
     {
         if (g_ros_publishers[x].inUse == false)
         {
-            g_ros_publishers[x].topicName = cstr_topicName;
+            g_ros_publishers[x].topicName = strdup(cstr_topicName);
             g_ros_publishers[x].inUse = true;
             g_ros_publishers[x].dataTypeCtrlBlk = type_CtrlBlk;
 
@@ -286,6 +287,8 @@ mp_obj_t  registerROSPublisher(
     mp_raise_ValueError(MP_ERROR_TEXT("No Available Publisher Slots"));
     return(mp_const_none);
 }
+
+MP_REGISTER_ROOT_POINTER(mp_obj_t rosmicropy_subscription_callbacks[ros_subscription_slots]);
 
 /**
  * 

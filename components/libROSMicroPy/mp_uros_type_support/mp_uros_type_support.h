@@ -31,6 +31,10 @@ void serializeInt(ucdrBuffer *cdr,  mp_obj_t value, dxi_t* inst);
 void deserializeInt(ucdrBuffer *cdr,   dxi_t* inst, mp_obj_stk_t *obj_stack);
 size_t serializedSizeInt(const void *mp_obj, size_t current_alignment);
 
+void serializeString(ucdrBuffer *cdr,  mp_obj_t value, dxi_t* inst);
+void deserializeString(ucdrBuffer *cdr,   dxi_t* inst, mp_obj_stk_t *obj_stack);
+size_t serializedSizeString(const void *mp_obj, size_t current_alignment);
+
 void serializeFloat(ucdrBuffer *cdr,  mp_obj_t value, dxi_t* inst);
 void deserializeFloat(ucdrBuffer *cdr,   dxi_t* inst, mp_obj_stk_t *obj_stack);
 size_t serializedSizeFloat(const void *mp_obj, size_t current_alignment);

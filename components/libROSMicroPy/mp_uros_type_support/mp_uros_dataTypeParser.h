@@ -4,6 +4,8 @@
 
 #include "py/runtime.h"
 #include "py/obj.h"
+#include "py/qstr.h"
+#include <ucdr/microcdr.h>
 
 #include "rosidl_runtime_c/message_type_support_struct.h"
 #include "rosidl_typesupport_microxrcedds_c/identifier.h"
@@ -25,13 +27,36 @@ typedef struct mp_obj_stack {
 
 typedef struct dataXferInst dxi_t;
 
+typedef enum dataXferKind {
+    DXI_KIND_UNSUPPORTED = 0,
+    DXI_KIND_BOOL,
+    DXI_KIND_BYTE,
+    DXI_KIND_CHAR,
+    DXI_KIND_INT8,
+    DXI_KIND_UINT8,
+    DXI_KIND_INT16,
+    DXI_KIND_UINT16,
+    DXI_KIND_INT32,
+    DXI_KIND_UINT32,
+    DXI_KIND_INT64,
+    DXI_KIND_UINT64,
+    DXI_KIND_FLOAT32,
+    DXI_KIND_FLOAT64,
+    DXI_KIND_STRING,
+    DXI_KIND_ROS_TYPE,
+} dxi_kind_t;
+
 struct dataXferInst {
     char *type;
     char *name;
+    qstr name_qstr;
+    mp_obj_t name_obj;
+    dxi_kind_t kind;
     bool islastBlk;
     bool isROSType;
     int  shallowComponentCount;
     bool isSequence;
+    bool isArray;
     int  capicity;
 
     void (*deserialize) (ucdrBuffer *cdr,   dxi_t* inst, mp_obj_stk_t *obj_stack);

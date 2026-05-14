@@ -12,6 +12,7 @@
 
 #include "esp_wifi.h"
 #include "esp_netif.h"
+#include "py/mpthread.h"
 
 
 rclc_executor_t		rmp_rclc_executor;
@@ -227,7 +228,9 @@ void run_ROS_Stack() {
 
 	printf("\r\nROS Task running task\r\n");
 	while(1) {
+		MP_THREAD_GIL_ENTER();
 		RCSOFTCHECK(rclc_executor_spin(&rmp_rclc_executor ));
+		MP_THREAD_GIL_EXIT();
 
 		printf("MicroRos Spinning\r\n");
 		const TickType_t xDelay = 2000 / portTICK_PERIOD_MS;
