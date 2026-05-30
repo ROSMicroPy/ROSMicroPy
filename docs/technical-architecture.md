@@ -4,47 +4,46 @@ ROSMicroPy is layered so Python application code can use ROS concepts while nati
 
 ## Runtime Layers
 
-```plantuml
-@startuml
-package "MicroPython Application" {
-  [rclpy-style app]
-  [ROSMicroPy SDK app]
-}
+```mermaid
+flowchart TD
+    subgraph App["MicroPython Application"]
+        RclpyApp["rclpy-style app"]
+        SDKApp["ROSMicroPy SDK app"]
+    end
 
-package "Python Compatibility Layer" {
-  [rclpy shim]
-  [generated message classes]
-  [rosmicropy_interfaces.Message]
-}
+    subgraph Py["Python Compatibility Layer"]
+        RclpyShim["rclpy shim"]
+        MsgClasses["generated message classes"]
+        MessageBase["rosmicropy_interfaces.Message"]
+    end
 
-package "Native MicroPython Module" {
-  [ROSMicroPy.c exports]
-  [uros_base_func.c]
-  [uros_mesg_func.c]
-  [mp_uros_dataTypeParser.c]
-  [mp_uros_type_support.c]
-}
+    subgraph Native["Native MicroPython Module"]
+        Exports["ROSMicroPy.c exports"]
+        Base["uros_base_func.c"]
+        Msg["uros_mesg_func.c"]
+        Parser["mp_uros_dataTypeParser.c"]
+        TypeSupport["mp_uros_type_support.c"]
+    end
 
-package "ROS Runtime" {
-  [rclc node]
-  [rclc executor]
-  [micro-ROS rmw]
-  [Micro XRCE-DDS]
-}
+    subgraph ROS["ROS Runtime"]
+        Node["rclc node"]
+        Executor["rclc executor"]
+        RMW["micro-ROS rmw"]
+        XRCE["Micro XRCE-DDS"]
+    end
 
-[rclpy-style app] --> [rclpy shim]
-[ROSMicroPy SDK app] --> [ROSMicroPy.c exports]
-[rclpy shim] --> [ROSMicroPy.c exports]
-[generated message classes] --> [rosmicropy_interfaces.Message]
-[ROSMicroPy.c exports] --> [uros_base_func.c]
-[ROSMicroPy.c exports] --> [uros_mesg_func.c]
-[uros_mesg_func.c] --> [mp_uros_type_support.c]
-[mp_uros_dataTypeParser.c] --> [mp_uros_type_support.c]
-[uros_base_func.c] --> [rclc node]
-[uros_base_func.c] --> [rclc executor]
-[rclc executor] --> [micro-ROS rmw]
-[micro-ROS rmw] --> [Micro XRCE-DDS]
-@enduml
+    RclpyApp --> RclpyShim
+    SDKApp --> Exports
+    RclpyShim --> Exports
+    MsgClasses --> MessageBase
+    Exports --> Base
+    Exports --> Msg
+    Msg --> TypeSupport
+    Parser --> TypeSupport
+    Base --> Node
+    Base --> Executor
+    Executor --> RMW
+    RMW --> XRCE
 ```
 
 ## Native API Exports
@@ -81,43 +80,41 @@ package "ROS Runtime" {
 
 ## Publisher Flow
 
-```plantuml
-@startuml
-participant "Python app" as App
-participant "rclpy/SDK" as Py
-participant "uros_mesg_func.c" as Msg
-participant "type support slot" as TS
-participant "rcl" as RCL
+```mermaid
+sequenceDiagram
+    participant App as Python app
+    participant Py as rclpy/SDK
+    participant Msg as uros_mesg_func.c
+    participant TS as type support slot
+    participant RCL as rcl
 
-App -> Py: create_publisher(MsgType, topic)
-Py -> Msg: registerDataType(dataMap)
-Msg -> TS: compile or reuse type
-Py -> Msg: registerROSPublisher(topic, type_name)
-Msg -> RCL: rclc_publisher_init_default(...)
-App -> Py: publisher.publish(msg)
-Py -> Msg: publishMsg(topic, msg)
-Msg -> RCL: rcl_publish(pub, msg, NULL)
-RCL -> TS: cdr_serialize(slot, msg, cdr)
-TS --> RCL: serialized CDR bytes
-@enduml
+    App->>Py: create_publisher(MsgType, topic)
+    Py->>Msg: registerDataType(dataMap)
+    Msg->>TS: compile or reuse type
+    Py->>Msg: registerROSPublisher(topic, type_name)
+    Msg->>RCL: rclc_publisher_init_default(...)
+    App->>Py: publisher.publish(msg)
+    Py->>Msg: publishMsg(topic, msg)
+    Msg->>RCL: rcl_publish(pub, msg, NULL)
+    RCL->>TS: cdr_serialize(slot, msg, cdr)
+    TS-->>RCL: serialized CDR bytes
 ```
 
 ## Subscription Flow
 
-```plantuml
-@startuml
-participant "ROS graph" as ROS
-participant "rclc executor" as Exec
-participant "type support slot" as TS
-participant "uros_mesg_func.c" as Msg
-participant "Python callback" as Callback
+```mermaid
+sequenceDiagram
+    participant ROS as ROS graph
+    participant Exec as rclc executor
+    participant TS as type support slot
+    participant Msg as uros_mesg_func.c
+    participant Callback as Python callback
 
-ROS -> Exec: topic data
-Exec -> TS: cdr_deserialize(slot, cdr, response)
-TS --> Exec: Python dict message
-Exec -> Msg: service_callback(response, context)
-Msg -> Callback: callback(message)
-@enduml
+    ROS->>Exec: topic data
+    Exec->>TS: cdr_deserialize(slot, cdr, response)
+    TS-->>Exec: Python dict message
+    Exec->>Msg: service_callback(response, context)
+    Msg->>Callback: callback(message)
 ```
 
 ## Slot Tables

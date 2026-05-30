@@ -6,7 +6,7 @@ The first track is for end users writing ROS 2-compatible nodes in MicroPython. 
 
 The second track is for maintainers and firmware developers. It explains how ROSMicroPy works internally, how MicroPython calls cross into native C, how dynamic type support is registered with micro-ROS, and how message data is marshaled between MicroPython objects, ROSMicroPy C code, Micro CDR, and the micro-ROS transport.
 
-The diagrams use fenced `plantuml` blocks, which are compatible with GitLab Flavored Markdown when PlantUML or Kroki diagram rendering is enabled for the GitLab instance. If diagram rendering is disabled, GitLab still shows the diagram source as a normal code block.
+The diagrams use fenced `mermaid` blocks, which GitHub renders directly in Markdown files, issues, pull requests, discussions, and wikis.
 
 ## End User Track
 

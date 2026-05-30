@@ -45,27 +45,26 @@ The rclpy shim overrides the agent IP with its own default, currently `192.16.0.
 
 ## Startup Sequence
 
-```plantuml
-@startuml
-actor User
-participant "MicroPython app" as App
-participant "rclpy shim or ROSMicroPy SDK" as Py
-participant "native ROSMicroPy module" as Native
-participant "rclc / micro-ROS" as RCLC
-participant "micro-ROS Agent" as Agent
+```mermaid
+sequenceDiagram
+    actor User
+    participant App as MicroPython app
+    participant Py as rclpy shim or ROSMicroPy SDK
+    participant Native as native ROSMicroPy module
+    participant RCLC as rclc / micro-ROS
+    participant Agent as micro-ROS Agent
 
-User -> App: run program
-App -> Py: set node and bridge config
-Py -> Native: setAgentIP/setAgentPort/setNodeName
-App -> Py: init
-Py -> Native: init_ROS_Stack()
-Native -> Native: init publishers/subscriptions/type support
-Native -> RCLC: init options and UDP agent address
-RCLC -> Agent: connect through Micro XRCE-DDS
-Native -> RCLC: create support, node, executor
-App -> Py: register publishers/subscriptions
-App -> Py: spin
-Py -> Native: run_ROS_Stack()
-Native -> RCLC: executor spin loop
-@enduml
+    User->>App: run program
+    App->>Py: set node and bridge config
+    Py->>Native: setAgentIP/setAgentPort/setNodeName
+    App->>Py: init
+    Py->>Native: init_ROS_Stack()
+    Native->>Native: init publishers/subscriptions/type support
+    Native->>RCLC: init options and UDP agent address
+    RCLC->>Agent: connect through Micro XRCE-DDS
+    Native->>RCLC: create support, node, executor
+    App->>Py: register publishers/subscriptions
+    App->>Py: spin
+    Py->>Native: run_ROS_Stack()
+    Native->>RCLC: executor spin loop
 ```

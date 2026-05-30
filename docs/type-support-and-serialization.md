@@ -2,7 +2,7 @@
 
 This document explains the runtime type-support path used by ROSMicroPy. It is the deepest part of the technical track: generated or hand-written MicroPython message definitions become `dataMap` dictionaries, `dataMap` dictionaries are compiled into a compact instruction list, and micro-ROS calls slot-specific C callbacks to serialize and deserialize messages with Micro CDR.
 
-The diagrams are written as GitLab-compatible fenced `plantuml` blocks. They render on GitLab when the instance has PlantUML or Kroki enabled; otherwise they remain readable source blocks.
+The diagrams are written as fenced `mermaid` blocks, which GitHub renders directly in Markdown files.
 
 ## The Problem ROSMicroPy Solves
 
@@ -24,69 +24,70 @@ ROSMicroPy does this with three concepts:
 
 ## Runtime Model
 
-```plantuml
-class Message {
-  +get_data_map()
-  +dataMap
-  +__getattr__(name)
-  +__setattr__(name, value)
-}
+```mermaid
+classDiagram
+    class Message {
+        +get_data_map()
+        +dataMap
+        +__getattr__(name)
+        +__setattr__(name, value)
+    }
 
-class "dataMap dict" as DataMap {
-  message_name
-  message_namespace
-  components[]
-}
+    class DataMap {
+        message_name
+        message_namespace
+        components[]
+    }
 
-class dxc_cb_t {
-  type
-  dxil
-  ros_mesg_type_support
-  componentCount
-  index
-}
+    class dxc_cb_t {
+        type
+        dxil
+        ros_mesg_type_support
+        componentCount
+        index
+    }
 
-class dxil_t {
-  type
-  component_len
-  instructionList
-}
+    class dxil_t {
+        type
+        component_len
+        instructionList
+    }
 
-class dxi_t {
-  type
-  name
-  name_obj
-  kind
-  isROSType
-  isArray
-  isSequence
-  capicity
-  serialize()
-  deserialize()
-  serializedSize()
-}
+    class dxi_t {
+        type
+        name
+        name_obj
+        kind
+        isROSType
+        isArray
+        isSequence
+        capicity
+        serialize()
+        deserialize()
+        serializedSize()
+    }
 
-class rosidl_message_type_support_t {
-  typesupport_identifier
-  data
-  func
-}
+    class rosidl_message_type_support_t {
+        typesupport_identifier
+        data
+        func
+    }
 
-class message_type_support_callbacks_t {
-  message_namespace_
-  message_name_
-  cdr_serialize()
-  cdr_deserialize()
-  get_serialized_size()
-  max_serialized_size()
-}
+    class message_type_support_callbacks_t {
+        message_namespace_
+        message_name_
+        cdr_serialize()
+        cdr_deserialize()
+        get_serialized_size()
+        max_serialized_size()
+    }
 
-Message --> DataMap : get_data_map()
-DataMap --> dxc_cb_t : registerDataType()
-dxc_cb_t *-- dxil_t
-dxil_t *-- dxi_t
-dxc_cb_t *-- rosidl_message_type_support_t
-rosidl_message_type_support_t *-- message_type_support_callbacks_t
+    Message --> DataMap : get_data_map()
+    DataMap --> dxc_cb_t : registerDataType()
+    dxc_cb_t *-- dxil_t
+    dxil_t *-- dxi_t
+    dxc_cb_t *-- rosidl_message_type_support_t
+    rosidl_message_type_support_t *-- message_type_support_callbacks_t
 ```
 
 `dxc_cb_t` is the runtime control block for a registered type. It binds the compiled schema (`dxil`) to the type-support handle that rclc and micro-ROS consume.
@@ -174,24 +175,25 @@ Arrays and sequences are supported for scalar and string fields. Arrays or seque
 
 First, it walks the tree in count-only mode so it knows how many `dxi_t` instructions to allocate. Then it allocates a `dxil_t`, creates a root instruction at index `0`, and walks the tree again to populate each instruction.
 
-```plantuml
-participant "MicroPython app" as App
-participant "ROSMicroPy module" as RM
-participant "parseDataTypeDefinition" as Parser
-participant "type-support slot" as Slot
-participant "DXIL instruction list" as DXIL
+```mermaid
+sequenceDiagram
+    participant App as MicroPython app
+    participant RM as ROSMicroPy module
+    participant Parser as parseDataTypeDefinition
+    participant Slot as type-support slot
+    participant DXIL as DXIL instruction list
 
-App -> RM : registerDataType(dataMap)
-RM -> Parser : parseDataTypeDefinition(dataMap)
-Parser -> Slot : findAvailTypeSlot()
-Parser -> Parser : validate message_name,\nmessage_namespace,\ncomponents
-Parser -> Parser : count component tree
-Parser -> DXIL : allocate componentCount + root
-Parser -> DXIL : write root instruction at index 0
-Parser -> DXIL : flatten components into dxi_t entries
-Parser -> Slot : attach dxil and callback metadata
-Parser --> RM : message_name
-RM --> App : type name string
+    App->>RM: registerDataType(dataMap)
+    RM->>Parser: parseDataTypeDefinition(dataMap)
+    Parser->>Slot: findAvailTypeSlot()
+    Parser->>Parser: validate message_name, message_namespace, components
+    Parser->>Parser: count component tree
+    Parser->>DXIL: allocate componentCount + root
+    Parser->>DXIL: write root instruction at index 0
+    Parser->>DXIL: flatten components into dxi_t entries
+    Parser->>Slot: attach dxil and callback metadata
+    Parser-->>RM: message_name
+    RM-->>App: type name string
 ```
 
 The flattened list preserves ROS field order. Nested message fields become a parent `DXI_KIND_ROS_TYPE` instruction followed by child scalar instructions. The last instruction in a nested block is marked with `islastBlk` so the serializer/deserializer can pop back to the parent object.
@@ -234,22 +236,23 @@ That slot number lets the generic serializer find the right `dxc_cb_t`, `dxil_t`
 
 Publisher registration links a topic to a previously registered dynamic type:
 
-```plantuml
-participant "Python node" as Py
-participant "rclpy shim / SDK" as API
-participant "uros_mesg_func.c" as Msg
-participant "type registry" as Types
-participant "rclc" as RCLC
+```mermaid
+sequenceDiagram
+    participant Py as Python node
+    participant API as rclpy shim / SDK
+    participant Msg as uros_mesg_func.c
+    participant Types as type registry
+    participant RCLC as rclc
 
-Py -> API : create_publisher(Twist, "/cmd_vel", qos)
-API -> API : get Twist dataMap
-API -> Msg : registerDataType(dataMap)
-Msg -> Types : compile or use type slot
-API -> Msg : registerROSPublisher("/cmd_vel", "Twist")
-Msg -> Types : findTypeByName("Twist")
-Msg -> RCLC : rclc_publisher_init_default(...,\nros_mesg_type_support,\n"/cmd_vel")
-Msg --> API : topic name
-API --> Py : Publisher
+    Py->>API: create_publisher(Twist, "/cmd_vel", qos)
+    API->>API: get Twist dataMap
+    API->>Msg: registerDataType(dataMap)
+    Msg->>Types: compile or use type slot
+    API->>Msg: registerROSPublisher("/cmd_vel", "Twist")
+    Msg->>Types: findTypeByName("Twist")
+    Msg->>RCLC: rclc_publisher_init_default(...)
+    Msg-->>API: topic name
+    API-->>Py: Publisher
 ```
 
 `registerROSPublisher()` stores the topic name, marks a publisher slot in use, saves the type control block, and passes `type_CtrlBlk->ros_mesg_type_support` to `rclc_publisher_init_default()`.
@@ -264,21 +267,22 @@ rcl_publish(&pub->pub, data, NULL);
 
 The `data` pointer is the MicroPython dictionary-backed message object. Later, the micro-ROS type-support layer calls the slot's CDR serializer. ROSMicroPy casts the untyped message pointer back to `mp_obj_t` and reads it as a dict.
 
-```plantuml
-participant "Python app" as App
-participant "ROSMicroPy.publishMsg" as Publish
-participant "rcl_publish" as RCL
-participant "slot callback" as Slot
-participant "generic serializer" as Ser
-participant "Micro CDR buffer" as CDR
+```mermaid
+sequenceDiagram
+    participant App as Python app
+    participant Publish as ROSMicroPy.publishMsg
+    participant RCL as rcl_publish
+    participant Slot as slot callback
+    participant Ser as generic serializer
+    participant CDR as Micro CDR buffer
 
-App -> Publish : publishMsg("/cmd_vel", msg_dict)
-Publish -> RCL : rcl_publish(pub, msg_dict, NULL)
-RCL -> Slot : cdr_serialize(msg_dict, cdr)
-Slot -> Ser : mpy_uros_typesupport_cdr_serialize(slot, msg_dict, cdr)
-Ser -> Ser : cast to mp_obj_t\nget root dict map
-Ser -> CDR : serialize fields in DXIL order
-CDR --> RCL : serialized bytes
+    App->>Publish: publishMsg("/cmd_vel", msg_dict)
+    Publish->>RCL: rcl_publish(pub, msg_dict, NULL)
+    RCL->>Slot: cdr_serialize(msg_dict, cdr)
+    Slot->>Ser: mpy_uros_typesupport_cdr_serialize(slot, msg_dict, cdr)
+    Ser->>Ser: cast to mp_obj_t and get root dict map
+    Ser->>CDR: serialize fields in DXIL order
+    CDR-->>RCL: serialized bytes
 ```
 
 The serializer uses an object stack to track nesting. The root dictionary is pushed first. When a `DXI_KIND_ROS_TYPE` instruction is encountered, the serializer looks up that field in the current dict, validates that it is another dict, and pushes it. Scalar instructions read from the current dict and call the instruction's serializer function.
@@ -327,19 +331,20 @@ Size calculations include Micro CDR alignment and the four-byte string/sequence 
 
 Subscriptions follow the same type registration path, then attach a callback to the rclc executor:
 
-```plantuml
-participant "Python node" as Py
-participant "rclpy shim / SDK" as API
-participant "uros_mesg_func.c" as Msg
-participant "type registry" as Types
-participant "rclc executor" as Exec
+```mermaid
+sequenceDiagram
+    participant Py as Python node
+    participant API as rclpy shim / SDK
+    participant Msg as uros_mesg_func.c
+    participant Types as type registry
+    participant Exec as rclc executor
 
-Py -> API : create_subscription(Twist, "/cmd_vel", callback, qos)
-API -> Msg : registerDataType(Twist dataMap)
-API -> Msg : registerEventSubscription("/cmd_vel", "Twist", callback)
-Msg -> Types : findTypeByName("Twist")
-Msg -> Msg : store callback in subscription slot
-Msg -> Exec : rclc_executor_add_subscription_with_context(...,\nservice_callback,\nsubscription slot)
+    Py->>API: create_subscription(Twist, "/cmd_vel", callback, qos)
+    API->>Msg: registerDataType(Twist dataMap)
+    API->>Msg: registerEventSubscription("/cmd_vel", "Twist", callback)
+    Msg->>Types: findTypeByName("Twist")
+    Msg->>Msg: store callback in subscription slot
+    Msg->>Exec: rclc_executor_add_subscription_with_context(...)
 ```
 
 `registerEventSubscription()` stores the MicroPython callback both in the subscription slot and in a MicroPython root pointer array so the callback is not collected by the GC.
@@ -348,22 +353,23 @@ Msg -> Exec : rclc_executor_add_subscription_with_context(...,\nservice_callback
 
 When a ROS message arrives, micro-ROS calls the slot's deserialize callback. ROSMicroPy creates a new root dict, walks the DXIL instruction list, and fills the dict in ROS field order.
 
-```plantuml
-participant "Micro XRCE-DDS" as XRCE
-participant "rclc executor" as Exec
-participant "slot callback" as Slot
-participant "generic deserializer" as Deser
-participant "service_callback" as Callback
-participant "Python callback" as PyCb
+```mermaid
+sequenceDiagram
+    participant XRCE as Micro XRCE-DDS
+    participant Exec as rclc executor
+    participant Slot as slot callback
+    participant Deser as generic deserializer
+    participant Callback as service_callback
+    participant PyCb as Python callback
 
-XRCE -> Exec : incoming topic bytes
-Exec -> Slot : cdr_deserialize(cdr, response)
-Slot -> Deser : mpy_uros_typesupport_cdr_deserialize(slot, cdr, response)
-Deser -> Deser : create root dict
-Deser -> Deser : walk DXIL and fill nested dicts
-Deser --> Exec : response points to root dict
-Exec -> Callback : service_callback(response, subscription)
-Callback -> PyCb : callback(message_dict)
+    XRCE->>Exec: incoming topic bytes
+    Exec->>Slot: cdr_deserialize(cdr, response)
+    Slot->>Deser: mpy_uros_typesupport_cdr_deserialize(slot, cdr, response)
+    Deser->>Deser: create root dict
+    Deser->>Deser: walk DXIL and fill nested dicts
+    Deser-->>Exec: response points to root dict
+    Exec->>Callback: service_callback(response, subscription)
+    Callback->>PyCb: callback(message_dict)
 ```
 
 For nested ROS types, `deserializeROSType()` creates a child dict, stores it in the current parent under the field name, and pushes that child dict onto the object stack. Scalar instructions deserialize one value from the CDR stream and store it into the current dict. When an instruction is marked `islastBlk`, the stack pops back to the parent dict.
@@ -383,26 +389,14 @@ publishMsg("/cmd_vel", msg)
 
 the serializer walks this shape:
 
-```plantuml
-object root {
-  linear
-  angular
-}
+```mermaid
+flowchart TD
+    root["root dict<br/>linear<br/>angular"]
+    linear["linear dict<br/>x: 1.0<br/>y: 0.0<br/>z: 0.0"]
+    angular["angular dict<br/>x: 0.0<br/>y: 0.0<br/>z: 0.5"]
 
-object linear {
-  x = 1.0
-  y = 0.0
-  z = 0.0
-}
-
-object angular {
-  x = 0.0
-  y = 0.0
-  z = 0.5
-}
-
-root --> linear
-root --> angular
+    root --> linear
+    root --> angular
 ```
 
 The CDR stream receives the six `float64` values in ROS message-definition order:
