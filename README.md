@@ -2,31 +2,30 @@
 
 ROSMicroPy brings MicroPython and micro-ROS together so an ESP32-class device can act as a ROS 2 node while still being programmed mostly in Python.
 
-The project has two documentation paths:
+The primary way to write ROSMicroPy applications is the integrated rclpy interface. The goal is practical portability: take a ROS 2 `rclpy` app from your computer and run it on a ROSMicroPy node with minimal changes.
 
-- **Use ROSMicroPy**: write MicroPython or rclpy-style programs, configure the bridge/agent, publish messages, subscribe to topics, and use generated message classes.
-- **Understand ROSMicroPy**: learn how the MicroPython API is bound into native code, how rclc and micro-ROS are initialized, and how runtime ROS type support serializes Python objects into Micro CDR.
+The older direct MicroPython ABI exported through `uros_mp_reg` remains for older code and internal support, but it should be treated as deprecated for new application development.
 
 ## Documentation
 
-Start here:
+### End User Track
 
-- [Documentation index](docs/README.md)
 - [End user overview](docs/user-guide.md)
-- [rclpy-style programming](docs/rclpy-guide.md)
-- [ROSMicroPy MicroPython SDK programming](docs/micropython-sdk-guide.md)
+- [rclpy programming](docs/rclpy-guide.md)
 - [Startup and bridge configuration](docs/configuration-and-startup.md)
+- [Deprecated MicroPython ABI](docs/micropython-sdk-guide.md)
+
+### Technical Track
+
 - [Technical architecture](docs/technical-architecture.md)
 - [Type support and serialization internals](docs/type-support-and-serialization.md)
+
+The diagrams in the documentation use fenced `mermaid` blocks, which GitHub renders directly in Markdown files, issues, pull requests, discussions, and wikis.
 
 ## Examples
 
 The main example directories are:
 
-- `python_example_code/rclpy/`: rclpy-style publisher/subscriber examples.
-- `python_example_code/other/`: lower-level ROSMicroPy SDK examples.
+- `python_example_code/rclpy/`: rclpy publisher/subscriber examples.
+- `python_example_code/other/`: older direct ABI examples.
 - `python_example_code/RMPCore/`: robot-oriented examples.
-
-## Historical Docs
-
-Older documentation has been preserved in `old_docs/`. The current docs in `docs/` are intended to be the maintained entry point.

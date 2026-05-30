@@ -1,6 +1,8 @@
-# ROSMicroPy MicroPython SDK Guide
+# Deprecated MicroPython ABI
 
-The lower-level SDK is exposed by the native `ROSMicroPy` MicroPython module. It gives direct access to startup, type registration, publisher creation, subscription creation, and message publishing.
+The direct `ROSMicroPy` MicroPython module exported through `uros_mp_reg` is the legacy ABI. It exists to support the integrated rclpy interface and older code, and it should be considered deprecated for new application development.
+
+Use this document only when maintaining older examples, testing the runtime directly, or debugging startup, type registration, publisher creation, subscription creation, and message publishing at the ABI level.
 
 ## Startup
 

@@ -6,12 +6,12 @@ The diagrams are written as fenced `mermaid` blocks, which GitHub renders direct
 
 ## The Problem ROSMicroPy Solves
 
-Normal ROS 2 C nodes compile message-specific type-support code ahead of time. ROSMicroPy instead accepts message definitions at runtime from MicroPython. The native module has to make micro-ROS believe it has normal `rosidl_message_type_support_t` handles while still using a generic serializer/deserializer that reads MicroPython dictionaries.
+Normal ROS 2 C nodes compile message-specific type-support code ahead of time. ROSMicroPy instead accepts message definitions at runtime from the frozen Python layer. The C runtime has to make micro-ROS believe it has normal `rosidl_message_type_support_t` handles while still using a generic serializer/deserializer that reads MicroPython dictionaries.
 
 ROSMicroPy does this with three concepts:
 
 - A Python `dataMap` describes a ROS message type and its fields.
-- A native DXIL instruction list flattens the message definition into ordered transfer instructions.
+- A DXIL instruction list flattens the message definition into ordered transfer instructions.
 - A fixed type-support slot owns a `rosidl_message_type_support_t` whose callbacks delegate back to the generic serializer/deserializer with that slot number.
 
 ## Important Files
@@ -123,16 +123,7 @@ Generated message classes inherit from the dictionary-backed `Message` helper. A
 }
 ```
 
-The direct SDK can pass this map explicitly:
-
-```python
-from ROSMicroPy import registerDataType
-from geometry_msgs.msg import Twist
-
-type_name = registerDataType(Twist.get_data_map())
-```
-
-The rclpy-style layer does the same thing automatically when `Node.create_publisher()` or `Node.create_subscription()` receives a message class.
+The integrated rclpy interface handles this automatically when `Node.create_publisher()` or `Node.create_subscription()` receives a message class.
 
 ## dataMap Schema
 
@@ -177,14 +168,14 @@ First, it walks the tree in count-only mode so it knows how many `dxi_t` instruc
 
 ```mermaid
 sequenceDiagram
-    participant App as MicroPython app
-    participant RM as ROSMicroPy module
+    participant App as rclpy app
+    participant ABI as deprecated MicroPython ABI
     participant Parser as parseDataTypeDefinition
     participant Slot as type-support slot
     participant DXIL as DXIL instruction list
 
-    App->>RM: registerDataType(dataMap)
-    RM->>Parser: parseDataTypeDefinition(dataMap)
+    App->>ABI: register type from message class
+    ABI->>Parser: parseDataTypeDefinition(dataMap)
     Parser->>Slot: findAvailTypeSlot()
     Parser->>Parser: validate message_name, message_namespace, components
     Parser->>Parser: count component tree
@@ -192,8 +183,8 @@ sequenceDiagram
     Parser->>DXIL: write root instruction at index 0
     Parser->>DXIL: flatten components into dxi_t entries
     Parser->>Slot: attach dxil and callback metadata
-    Parser-->>RM: message_name
-    RM-->>App: type name string
+    Parser-->>ABI: message_name
+    ABI-->>App: type ready
 ```
 
 The flattened list preserves ROS field order. Nested message fields become a parent `DXI_KIND_ROS_TYPE` instruction followed by child scalar instructions. The last instruction in a nested block is marked with `islastBlk` so the serializer/deserializer can pop back to the parent object.
@@ -239,27 +230,27 @@ Publisher registration links a topic to a previously registered dynamic type:
 ```mermaid
 sequenceDiagram
     participant Py as Python node
-    participant API as rclpy shim / SDK
+    participant API as rclpy
     participant Msg as uros_mesg_func.c
     participant Types as type registry
     participant RCLC as rclc
 
     Py->>API: create_publisher(Twist, "/cmd_vel", qos)
     API->>API: get Twist dataMap
-    API->>Msg: registerDataType(dataMap)
+    API->>Msg: register type from dataMap
     Msg->>Types: compile or use type slot
-    API->>Msg: registerROSPublisher("/cmd_vel", "Twist")
+    API->>Msg: create publisher for "/cmd_vel"
     Msg->>Types: findTypeByName("Twist")
     Msg->>RCLC: rclc_publisher_init_default(...)
     Msg-->>API: topic name
     API-->>Py: Publisher
 ```
 
-`registerROSPublisher()` stores the topic name, marks a publisher slot in use, saves the type control block, and passes `type_CtrlBlk->ros_mesg_type_support` to `rclc_publisher_init_default()`.
+The runtime stores the topic name, marks a publisher slot in use, saves the type control block, and passes `type_CtrlBlk->ros_mesg_type_support` to `rclc_publisher_init_default()`.
 
 ## Marshaling From MicroPython To C
 
-When Python publishes a message, the object remains a MicroPython object. `publishMsg(topic, data)` looks up the registered publisher and calls:
+When Python publishes a message, the object remains a MicroPython object. The runtime looks up the registered publisher and calls:
 
 ```c
 rcl_publish(&pub->pub, data, NULL);
@@ -270,13 +261,13 @@ The `data` pointer is the MicroPython dictionary-backed message object. Later, t
 ```mermaid
 sequenceDiagram
     participant App as Python app
-    participant Publish as ROSMicroPy.publishMsg
+    participant Publish as publisher runtime
     participant RCL as rcl_publish
     participant Slot as slot callback
     participant Ser as generic serializer
     participant CDR as Micro CDR buffer
 
-    App->>Publish: publishMsg("/cmd_vel", msg_dict)
+    App->>Publish: publish message
     Publish->>RCL: rcl_publish(pub, msg_dict, NULL)
     RCL->>Slot: cdr_serialize(msg_dict, cdr)
     Slot->>Ser: mpy_uros_typesupport_cdr_serialize(slot, msg_dict, cdr)
@@ -334,20 +325,20 @@ Subscriptions follow the same type registration path, then attach a callback to 
 ```mermaid
 sequenceDiagram
     participant Py as Python node
-    participant API as rclpy shim / SDK
+    participant API as rclpy
     participant Msg as uros_mesg_func.c
     participant Types as type registry
     participant Exec as rclc executor
 
     Py->>API: create_subscription(Twist, "/cmd_vel", callback, qos)
-    API->>Msg: registerDataType(Twist dataMap)
-    API->>Msg: registerEventSubscription("/cmd_vel", "Twist", callback)
+    API->>Msg: register type from Twist dataMap
+    API->>Msg: create subscription for "/cmd_vel"
     Msg->>Types: findTypeByName("Twist")
     Msg->>Msg: store callback in subscription slot
     Msg->>Exec: rclc_executor_add_subscription_with_context(...)
 ```
 
-`registerEventSubscription()` stores the MicroPython callback both in the subscription slot and in a MicroPython root pointer array so the callback is not collected by the GC.
+The runtime stores the MicroPython callback both in the subscription slot and in a MicroPython root pointer array so the callback is not collected by the GC.
 
 ## Deserialization From micro-ROS To MicroPython
 
@@ -384,7 +375,7 @@ msg = {
     "angular": {"x": 0.0, "y": 0.0, "z": 0.5},
 }
 
-publishMsg("/cmd_vel", msg)
+publisher.publish(msg)
 ```
 
 the serializer walks this shape:
@@ -424,14 +415,7 @@ The nested `Vector3` objects do not serialize as extra containers. They only cha
 
 ## Debugging Type Support
 
-Use `dumpDataType(type_name)` after registration:
-
-```python
-type_name = registerDataType(Twist.get_data_map())
-dumpDataType(type_name)
-```
-
-This prints the registered type name, namespace, component count, and instruction list. It is the fastest way to check whether the runtime understood a message definition the way you expected.
+At the deprecated ABI level, `dumpDataType(type_name)` prints the registered type name, namespace, component count, and instruction list. It is the fastest way to check whether the runtime understood a message definition the way you expected while debugging the type compiler.
 
 Common issues:
 

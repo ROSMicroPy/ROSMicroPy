@@ -1,8 +1,8 @@
-# rclpy-Style Programming
+# rclpy Programming
 
-The `components/libROSMicroPy/py/rclpy` package provides a small compatibility layer for writing MicroPython programs that resemble standard ROS 2 `rclpy` examples.
+The `components/libROSMicroPy/py/rclpy` package is the primary user-facing API for ROSMicroPy applications. It is frozen into the firmware image with ROSMicroPy, so from an application writer's point of view it is the native way to write ROSMicroPy nodes.
 
-It is not a full desktop `rclpy` implementation. It maps the common node, publisher, subscriber, logger, timer, init, and spin calls onto ROSMicroPy native functions.
+The goal is practical portability: take a ROS 2 `rclpy` app from your computer and run it on a ROSMicroPy node with minimal changes. ROSMicroPy currently implements the common node, publisher, subscriber, logger, timer, init, and spin calls used by small embedded nodes.
 
 ## Default Example Configuration
 
@@ -78,13 +78,9 @@ def main(args=None):
     rclpy.spin(node)
 ```
 
-## How rclpy Maps To ROSMicroPy
+## Porting Notes
 
-- `rclpy.init(...)` applies bridge/node configuration and calls `ROSMicroPy.init_ROS_Stack()`.
-- `Node(name)` calls `ROSMicroPy.setNodeName(name)`.
-- `create_publisher(MsgType, topic, qos)` registers the message type and calls `ROSMicroPy.registerROSPublisher(...)`.
-- `publisher.publish(msg)` calls `ROSMicroPy.publishMsg(topic, msg)`.
-- `create_subscription(MsgType, topic, callback, qos)` registers the message type and calls `ROSMicroPy.registerEventSubscription(...)`.
-- `rclpy.spin(node)` calls `ROSMicroPy.run_ROS_Stack()`.
-
-Message classes provide `get_data_map()`/`dataMap`, which the rclpy shim passes into `registerDataType()` automatically.
+- Keep node, publisher, subscription, and callback structure close to normal ROS 2 `rclpy`.
+- Keep message types explicit, for example `create_publisher(String, "topic", 10)`.
+- Replace desktop-only APIs with small embedded equivalents when needed.
+- Configure the micro-ROS agent address with `rclpy.init(...)` or the shared example helper.

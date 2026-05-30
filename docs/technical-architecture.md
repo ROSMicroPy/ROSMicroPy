@@ -1,23 +1,23 @@
 # Technical Architecture
 
-ROSMicroPy is layered so Python application code can use ROS concepts while native code owns the micro-ROS and rclc integration.
+ROSMicroPy is layered so Python application code uses the integrated rclpy interface while the C runtime owns the micro-ROS and rclc integration.
 
 ## Runtime Layers
 
 ```mermaid
 flowchart TD
     subgraph App["MicroPython Application"]
-        RclpyApp["rclpy-style app"]
-        SDKApp["ROSMicroPy SDK app"]
+        RclpyApp["rclpy app"]
+        LegacyApp["deprecated ABI app"]
     end
 
     subgraph Py["Python Compatibility Layer"]
-        RclpyShim["rclpy shim"]
+        Rclpy["frozen rclpy package"]
         MsgClasses["generated message classes"]
         MessageBase["rosmicropy_interfaces.Message"]
     end
 
-    subgraph Native["Native MicroPython Module"]
+    subgraph Runtime["ROSMicroPy C Runtime"]
         Exports["ROSMicroPy.c exports"]
         Base["uros_base_func.c"]
         Msg["uros_mesg_func.c"]
@@ -32,9 +32,9 @@ flowchart TD
         XRCE["Micro XRCE-DDS"]
     end
 
-    RclpyApp --> RclpyShim
-    SDKApp --> Exports
-    RclpyShim --> Exports
+    RclpyApp --> Rclpy
+    LegacyApp --> Exports
+    Rclpy --> Exports
     MsgClasses --> MessageBase
     Exports --> Base
     Exports --> Msg
@@ -46,9 +46,9 @@ flowchart TD
     RMW --> XRCE
 ```
 
-## Native API Exports
+## Deprecated ABI Exports
 
-`components/native/ROSMicroPy.c` exposes the native functions into MicroPython. The important public functions are:
+`components/libROSMicroPy/mp_uros_modules/uros_mp_reg.c` registers the direct `ROSMicroPy` MicroPython functions. That ABI exists to support the integrated rclpy interface and older code; it should be treated as deprecated for application development:
 
 - `init_ROS_Stack()`
 - `run_ROS_Stack()`
@@ -83,18 +83,18 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     participant App as Python app
-    participant Py as rclpy/SDK
+    participant Py as rclpy
     participant Msg as uros_mesg_func.c
     participant TS as type support slot
     participant RCL as rcl
 
     App->>Py: create_publisher(MsgType, topic)
-    Py->>Msg: registerDataType(dataMap)
+    Py->>Msg: register message type
     Msg->>TS: compile or reuse type
-    Py->>Msg: registerROSPublisher(topic, type_name)
+    Py->>Msg: create publisher
     Msg->>RCL: rclc_publisher_init_default(...)
     App->>Py: publisher.publish(msg)
-    Py->>Msg: publishMsg(topic, msg)
+    Py->>Msg: publish message
     Msg->>RCL: rcl_publish(pub, msg, NULL)
     RCL->>TS: cdr_serialize(slot, msg, cdr)
     TS-->>RCL: serialized CDR bytes

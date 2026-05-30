@@ -6,17 +6,15 @@ ROSMicroPy lets a MicroPython program participate in a ROS 2 graph through micro
 
 There are three pieces in a typical setup:
 
-- A ROSMicroPy device running MicroPython and the native ROSMicroPy module.
+- A ROSMicroPy device running MicroPython and the ROSMicroPy runtime module.
 - A micro-ROS agent reachable over the network.
 - A ROS 2 environment that sees the device as a ROS node.
 
-On the device you write Python. Under the hood, ROSMicroPy calls native C functions that create an rclc node, publishers, subscriptions, and type support callbacks.
+On the device you write Python with rclpy-style ROS concepts. The rclpy code is frozen into the firmware image with the rest of ROSMicroPy, so it behaves as the project's integrated Python interface.
 
-## Programming Choices
+## Primary Interface
 
-ROSMicroPy supports two styles.
-
-Use the rclpy-style API when you want examples that look like normal ROS 2 Python:
+Use the rclpy interface for ROSMicroPy application code. It is the primary interface and is designed so many desktop ROS 2 `rclpy` examples can move onto a ROSMicroPy node with minimal changes:
 
 ```python
 import rclpy
@@ -33,25 +31,7 @@ node = MinimalPublisher()
 rclpy.spin(node)
 ```
 
-Use the lower-level ROSMicroPy SDK when you want direct access to the native API:
-
-```python
-from ROSMicroPy import (
-    setNodeName, setAgentIP, setAgentPort,
-    init_ROS_Stack, run_ROS_Stack,
-    registerDataType, registerROSPublisher, publishMsg,
-)
-from rostype.Twist import Twist
-
-setNodeName("Turtle1")
-setAgentIP("192.16.0.50")
-setAgentPort("8888")
-
-init_ROS_Stack()
-type_twist = registerDataType(Twist.dataMap)
-pub = registerROSPublisher("/turtle1/cmd_vel", type_twist)
-run_ROS_Stack()
-```
+The older direct MicroPython ABI is still present to support rclpy internally and to keep older examples running. Treat it as deprecated for application code.
 
 ## Message Objects
 

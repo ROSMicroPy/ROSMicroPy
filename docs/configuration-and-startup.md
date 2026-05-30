@@ -2,9 +2,9 @@
 
 ROSMicroPy must know how to reach the micro-ROS agent before the ROS stack is initialized.
 
-## rclpy-Style Configuration
+## rclpy Configuration
 
-The rclpy shim supports configuration through `rclpy.init(...)`:
+ROSMicroPy applications configure startup through `rclpy.init(...)`:
 
 ```python
 rclpy.init(
@@ -20,9 +20,9 @@ rclpy.init(
 
 The examples centralize this in `python_example_code/rclpy/config.py`.
 
-## SDK Configuration
+## Deprecated ABI Configuration
 
-The direct SDK uses setters:
+The deprecated MicroPython ABI uses setters:
 
 ```python
 setNodeName("Turtle1")
@@ -31,17 +31,17 @@ setAgentPort("8888")
 setDomainID(0)
 ```
 
-Call these before `init_ROS_Stack()`.
+Call these before `init_ROS_Stack()`. This path is retained for older code and internal support; prefer `rclpy.init(...)` for application code.
 
-## Native Defaults
+## Runtime Defaults
 
-If Python code does not set values, native startup applies defaults in `init_ROS_Stack()`:
+If Python code does not set values, runtime startup applies defaults in `init_ROS_Stack()`:
 
 - Node name: `turtle2`
 - Agent IP: `192.168.8.100`
 - Agent port: `8888`
 
-The rclpy shim overrides the agent IP with its own default, currently `192.16.0.50`, before calling native initialization.
+The integrated rclpy interface overrides the agent IP with its own default, currently `192.16.0.50`, before calling runtime initialization.
 
 ## Startup Sequence
 
@@ -49,22 +49,22 @@ The rclpy shim overrides the agent IP with its own default, currently `192.16.0.
 sequenceDiagram
     actor User
     participant App as MicroPython app
-    participant Py as rclpy shim or ROSMicroPy SDK
-    participant Native as native ROSMicroPy module
+    participant Py as rclpy
+    participant Runtime as ROSMicroPy runtime module
     participant RCLC as rclc / micro-ROS
     participant Agent as micro-ROS Agent
 
     User->>App: run program
     App->>Py: set node and bridge config
-    Py->>Native: setAgentIP/setAgentPort/setNodeName
+    Py->>Runtime: setAgentIP/setAgentPort/setNodeName
     App->>Py: init
-    Py->>Native: init_ROS_Stack()
-    Native->>Native: init publishers/subscriptions/type support
-    Native->>RCLC: init options and UDP agent address
+    Py->>Runtime: init_ROS_Stack()
+    Runtime->>Runtime: init publishers/subscriptions/type support
+    Runtime->>RCLC: init options and UDP agent address
     RCLC->>Agent: connect through Micro XRCE-DDS
-    Native->>RCLC: create support, node, executor
+    Runtime->>RCLC: create support, node, executor
     App->>Py: register publishers/subscriptions
     App->>Py: spin
-    Py->>Native: run_ROS_Stack()
-    Native->>RCLC: executor spin loop
+    Py->>Runtime: run_ROS_Stack()
+    Runtime->>RCLC: executor spin loop
 ```
