@@ -1,0 +1,191 @@
+import ROSMicroPy as _rm
+
+
+_initialized = False
+_current_node = None
+_registered_types = {}
+
+
+def unimplemented(*args, **kwargs):
+    print("unimplemented")
+    return None
+
+
+def _type_data_map(msg_type):
+    if isinstance(msg_type, str):
+        return None
+
+    getter = getattr(msg_type, "get_data_map", None)
+    if getter:
+        return getter()
+
+    data_map = getattr(msg_type, "dataMap", None)
+    if data_map is not None:
+        return data_map
+
+    return getattr(msg_type, "_DATA_MAP", None)
+
+
+def _ensure_type_registered(msg_type):
+    type_name = _resolve_type_name(msg_type)
+    if type_name in _registered_types:
+        return type_name
+
+    data_map = _type_data_map(msg_type)
+    if data_map is not None:
+        registered = _rm.registerDataType(data_map)
+        if registered:
+            type_name = registered
+        _registered_types[type_name] = True
+
+    return type_name
+
+
+def _resolve_type_name(msg_type):
+    if isinstance(msg_type, str):
+        return msg_type
+
+    name = getattr(msg_type, "_TYPE_NAME", None)
+    if name:
+        return name
+
+    name = getattr(msg_type, "__name__", None)
+    if name:
+        return name
+
+    return str(msg_type)
+
+
+class _UnsupportedMixin:
+    def __getattr__(self, name):
+        return unimplemented
+
+
+class QoSProfile:
+    def __init__(self, depth=10, reliability=None, durability=None, history=None):
+        self.depth = depth
+        self.reliability = reliability
+        self.durability = durability
+        self.history = history
+
+
+qos_profile_default = QoSProfile()
+qos_profile_sensor_data = QoSProfile(depth=5)
+
+
+class Publisher(_UnsupportedMixin):
+    def __init__(self, topic, msg_type):
+        self.topic = topic
+        self.msg_type = msg_type
+
+    def publish(self, msg):
+        return _rm.publishMsg(self.topic, msg)
+
+
+class Subscription(_UnsupportedMixin):
+    def __init__(self, topic, msg_type, callback):
+        self.topic = topic
+        self.msg_type = msg_type
+        self.callback = callback
+
+
+class Node(_UnsupportedMixin):
+    def __init__(self, node_name, namespace=""):
+        self._node_name = node_name
+        self._namespace = namespace
+        self._publishers = []
+        self._subscriptions = []
+
+        _rm.setNodeName(node_name)
+        if namespace:
+            _rm.setNamespace(namespace)
+
+    def create_publisher(self, msg_type, topic, qos_profile=None, *args, **kwargs):
+        type_name = _ensure_type_registered(msg_type)
+        _rm.registerROSPublisher(topic, type_name)
+        publisher = Publisher(topic, msg_type)
+        self._publishers.append(publisher)
+        return publisher
+
+    def create_subscription(self, msg_type, topic, callback, qos_profile=None, *args, **kwargs):
+        type_name = _ensure_type_registered(msg_type)
+        _rm.registerEventSubscription(topic, type_name, callback)
+        subscription = Subscription(topic, msg_type, callback)
+        self._subscriptions.append(subscription)
+        return subscription
+
+    def get_name(self):
+        return self._node_name
+
+    def get_namespace(self):
+        return self._namespace
+
+    def destroy_node(self):
+        return unimplemented()
+
+
+def init(args=None, context=None, domain_id=None, *extra_args, **extra_kwargs):
+    global _initialized
+
+    if domain_id is not None:
+        _rm.setDomainID(domain_id)
+
+    _rm.init_ROS_Stack()
+    _initialized = True
+    return None
+
+
+def shutdown(*args, **kwargs):
+    global _initialized, _current_node
+    _initialized = False
+    _current_node = None
+    return unimplemented(*args, **kwargs)
+
+
+def try_shutdown(*args, **kwargs):
+    return shutdown(*args, **kwargs)
+
+
+def ok(*args, **kwargs):
+    return _initialized
+
+
+def spin(node, executor=None):
+    return _rm.run_ROS_Stack()
+
+
+def spin_once(*args, **kwargs):
+    return unimplemented(*args, **kwargs)
+
+
+def spin_until_future_complete(*args, **kwargs):
+    return unimplemented(*args, **kwargs)
+
+
+def create_node(node_name, namespace="", context=None, cli_args=None, use_global_arguments=True, enable_rosout=True, start_parameter_services=True, parameter_overrides=None, allow_undeclared_parameters=False, automatically_declare_parameters_from_overrides=False):
+    global _current_node
+
+    node = Node(node_name, namespace=namespace)
+    _current_node = node
+    return node
+
+
+def get_default_context(*args, **kwargs):
+    return None
+
+
+def get_global_executor(*args, **kwargs):
+    return None
+
+
+def create_rate(*args, **kwargs):
+    return unimplemented(*args, **kwargs)
+
+
+def Parameter(*args, **kwargs):
+    return unimplemented(*args, **kwargs)
+
+
+def Future(*args, **kwargs):
+    return unimplemented(*args, **kwargs)
+

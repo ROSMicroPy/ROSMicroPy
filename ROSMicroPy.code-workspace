@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../ROSMicroPy_buildtest/modules/libMicroPy_JSONForms"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.yaml": "home-assistant",
+			"mp_uros_type_support.h": "c",
+			"float.h": "c",
+			"mphal.h": "c",
+			"machine_i2c.h": "c",
+			"esp_camera.h": "c",
+			"types.h": "c",
+			"compressed_image__struct.h": "c",
+			"rmp_video_widget.h": "c",
+			"mptask.h": "c",
+			"esp_task.h": "c"
+		}
+	}
+}

@@ -1,34 +1,25 @@
-![](docs/images/ROSMicroPyHeader.svg)
+# ROSMicroPy Documentation
 
-## ROSMicroPy
-ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment along with native Micropython type support for ROS.
+ROSMicroPy can be approached from two documentation tracks.
 
-ROSMicroPy has two goals.
-* Provide a modular platform based on the ROS robotics with an easier learning curve to get started but also allows for future expansion into real world industrial robotics.
+The first track is for end users writing ROS 2-compatible nodes in MicroPython. It covers the rclpy-style compatibility API, the lower-level ROSMicroPy SDK, startup configuration, publishers, subscriptions, and message objects.
 
-* Expand on the idea of modular robotics where a robot can consist of many distributed compute modules that are organized into a single heterogenous interface using the "RollCall" protocol. The goal here is to allow robots to be assembled from many nodes, giving it more of a lego assembly feel, and having a Controller / IDE seeing all those nodes as a single robot control / programming interface.
+The second track is for maintainers and firmware developers. It explains how ROSMicroPy works internally, how MicroPython calls cross into native C, how dynamic type support is registered with micro-ROS, and how message data is marshaled between MicroPython objects, ROSMicroPy C code, Micro CDR, and the micro-ROS transport.
 
-* #### [Get Started](docs/LearnMore.md)
-* #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
-* #### [Learn more about MicroROS Type support](docs/implementation/typeSupport.md)
-* #### [Python Example Code](./python_example_code/README.md)
+The diagrams use fenced `plantuml` blocks, which are compatible with GitLab Flavored Markdown when PlantUML or Kroki diagram rendering is enabled for the GitLab instance. If diagram rendering is disabled, GitLab still shows the diagram source as a normal code block.
 
-### Current Build Profiles supported by ROSMicroPy
+## End User Track
 
-The core stack provides the basic functionality of a ROS enabled Micropython node  
+- [User guide](user-guide.md): project model, workflow, and common tasks.
+- [rclpy-style programming](rclpy-guide.md): write code using a small subset of the familiar ROS 2 Python API.
+- [ROSMicroPy SDK programming](micropython-sdk-guide.md): use the lower-level MicroPython API directly.
+- [Startup and bridge configuration](configuration-and-startup.md): configure node name, namespace, ROS domain, bridge IP, and port.
 
-![](docs/images/RMP_CoreStack.svg)
+## Technical Track
 
-From it's core configuration, there are other ROSMicroPy modules that can be configured to provide additional functionality. 
+- [Technical architecture](technical-architecture.md): runtime layers, initialization flow, publishers, subscribers, and threading.
+- [Type support and serialization](type-support-and-serialization.md): detailed explanation of type definitions, DXIL instruction lists, type-support slots, serialization, deserialization, sizing, arrays, and sequences.
 
-![](docs/images/RMP_LCD_Stack.svg)
+## Source Material
 
-The **LCD Controller** introduces to new modules;
-
-***ROSMicroPy-GUI***, is a [JSON Forms](https://jsonforms.io/) renderer for LVGL that allows for a Web based GUI layout designer to produce a JSON description of a screen layout that can be saved on a ROSMicroPy device.
-
-***ROSMiicroPy-JoyCom***, is a Bluetooth HID Central Server, that makes the inputs of a JoyCon device available for the ROSMicroPy environment. 
-
-![](docs/images/RMP_Cam_Stack.svg)
-
-***ROSMicroPy-CAM*** module allows an ESP32 Cam to publish a video stream in ROS format that can be received by another ROSMicroPy or other ROS enabled device. As images are pulled from the Camera, they are passed to the Python layer to be sent out as a ROS message or allow it to be analyzed by an image processing library such as [YOLO](https://www.kdnuggets.com/2018/09/object-detection-image-classification-yolo.html)
+The previous documentation set is preserved in `old_docs/`. It is useful historical context, but the files in this folder are the current map for the project.
