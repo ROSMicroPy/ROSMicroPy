@@ -4,14 +4,14 @@ set(MICROPY_BOARD RMP_WROVER_B)
 
 
 get_filename_component(BOARD_COMMON_DIR ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
-get_filename_component(MODULE_DIR ../../../modules ABSOLUTE)
+get_filename_component(COMPONENT_DIR ../../../components ABSOLUTE)
 message("Board Common Dir ${BOARD_COMMON_DIR}")
-message("Module Dir ${MODULE_DIR}")
+message("Module Dir ${get_filename_component_DIR}")
 message("Current List Dir ${CMAKE_CURRENT_LIST_DIR}")
 
 list(APPEND USER_C_MODULES 
-    ${MODULE_DIR}/libROSMicroPy/micropython.cmake
-    ${MODULE_DIR}/micropython-helpers/micropython.cmake
+    ${COMPONENT_DIR}/libROSMicroPy/micropython.cmake
+    ${COMPONENT_DIR}/micropython-helpers/micropython.cmake
 )
 
 
@@ -22,10 +22,11 @@ set(SDKCONFIG_DEFAULTS
     boards/sdkconfig.ble
     boards/sdkconfig.240mhz
     ${CMAKE_CURRENT_LIST_DIR}/sdkconfig.board
-#    boards/sdkconfig.int32
-#    boards/sdkconfig.compiler.debug
-#    boards/sdkconfig.usb
+##    boards/sdkconfig.int32
+##    boards/sdkconfig.compiler.debug
+##    boards/sdkconfig.usb
 )
+
 
 if(MICROPY_BOARD_VARIANT STREQUAL "D2WD")
     set(SDKCONFIG_DEFAULTS

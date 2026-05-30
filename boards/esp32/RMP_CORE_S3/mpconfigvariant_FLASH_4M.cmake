@@ -1,4 +1,4 @@
 set(SDKCONFIG_DEFAULTS
     ${SDKCONFIG_DEFAULTS}
-    boards/ESP32_GENERIC_S3/sdkconfig.flash_4m
+    ${CMAKE_CURRENT_LIST_DIR}/sdkconfig.flash_4m
 )

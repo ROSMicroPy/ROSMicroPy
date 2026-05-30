@@ -1,0 +1,12 @@
+from rosmicropy_interfaces import Message
+from ._types import _TYPE_DEFS
+
+class GoalStatusArray(Message):
+    _TYPE_NAME = 'GoalStatusArray'
+    _TYPE_DEF = _TYPE_DEFS['GoalStatusArray']
+    _fields_and_field_types = {'status_list': 'GoalStatus'}
+
+    def __init__(self, status_list=None):
+        self['status_list'] = [] if status_list is None else status_list
+
+dataMap = GoalStatusArray.get_data_map()

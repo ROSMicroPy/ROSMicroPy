@@ -1,7 +1,7 @@
 cd /opt/rosmicropy/micropython/ports/esp32
 
-idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_S3 fullclean
-idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_S3 clean
+#idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_S3 fullclean
+#idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_S3 clean
 
 rm -rf build
 rm -rf managed_components
@@ -9,6 +9,7 @@ cd /opt/rosmicropy/
 sh ./mkdirs.sh
 cd -
 
+/opt/rosmicropy/components/prepare_microros.sh
 idf.py -DDEBUG=yes -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_S3 build
 
 cp build/micropython.bin /opt/rosmicropy/release/rmp_core_s3.bin

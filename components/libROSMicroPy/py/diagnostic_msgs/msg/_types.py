@@ -1,0 +1,5 @@
+_TYPE_DEFS = {
+    'DiagnosticArray': ('DiagnosticArray', 'diagnostic_msgs::msg', (('header', 'Header', (('stamp', 'Time', (), False, False, 0), ('frame_id', 'string', (), False, False, 0)), False, False, 0), ('status', 'DiagnosticStatus', (('level', 'byte', (), False, False, 0), ('name', 'string', (), False, False, 0), ('message', 'string', (), False, False, 0), ('hardware_id', 'string', (), False, False, 0), ('values', 'KeyValue', (('key', 'string', (), False, False, 0), ('value', 'string', (), False, False, 0)), False, True, 0)), False, True, 0))),
+    'DiagnosticStatus': ('DiagnosticStatus', 'diagnostic_msgs::msg', (('level', 'byte', (), False, False, 0), ('name', 'string', (), False, False, 0), ('message', 'string', (), False, False, 0), ('hardware_id', 'string', (), False, False, 0), ('values', 'KeyValue', (('key', 'string', (), False, False, 0), ('value', 'string', (), False, False, 0)), False, True, 0))),
+    'KeyValue': ('KeyValue', 'diagnostic_msgs::msg', (('key', 'string', (), False, False, 0), ('value', 'string', (), False, False, 0))),
+}

@@ -1,57 +1,32 @@
+# ROSMicroPy
 
-<div style="width:100%">
-<table style="background-color:#FEFEF2;width:100%">
-<tr style="border:1px solid">
-  <td style="width:90%;padding-left:10px;font-size:48pt;color:black;float:left">
-    <p style="float:left;">ROSMicroPy</p>
-  </td>
-  <td>
-    <img src="./docs/images/Logo.png" height="100" style="float:right"></span>
- </td>
- </tr>
- </table>
- </div>
-<br/>
-<hr/>
+ROSMicroPy brings MicroPython and micro-ROS together so an ESP32-class device can act as a ROS 2 node while still being programmed mostly in Python.
 
-At its core ROSMicroPy is an integration of Micropython and MicroROS providing full access to ROS environment, features include;
+The project has two documentation paths:
 
-* Economical entry level Robotics.
-* An easier learning curve into ROS
-* Expandable beyond the basic configuration into the full ROS environment and its Modules. 
-* Distributed processing
+- **Use ROSMicroPy**: write MicroPython or rclpy-style programs, configure the bridge/agent, publish messages, subscribe to topics, and use generated message classes.
+- **Understand ROSMicroPy**: learn how the MicroPython API is bound into native code, how rclc and micro-ROS are initialized, and how runtime ROS type support serializes Python objects into Micro CDR.
 
-## Getting Started
-* #### [Install ROSMicroPy on an ESP32 device](./docs/getting-started/flash-code-on-device/installl-on-esp32.md)
-* #### [Basic ROS Message passing Example](docs/getting-started/basic-ros-example/basic-example.md)
-* #### [Build a ROS based Robot with Joystick Controller](./docs/getting-started/first-robot/FirstROSRobot.md)
+## Documentation
 
+Start here:
 
+- [Documentation index](docs/README.md)
+- [End user overview](docs/user-guide.md)
+- [rclpy-style programming](docs/rclpy-guide.md)
+- [ROSMicroPy MicroPython SDK programming](docs/micropython-sdk-guide.md)
+- [Startup and bridge configuration](docs/configuration-and-startup.md)
+- [Technical architecture](docs/technical-architecture.md)
+- [Type support and serialization internals](docs/type-support-and-serialization.md)
 
-## Technical implememtation
-* #### [How to compile from source code](./docs/building/build_from_source.md)
+## Examples
 
-* #### [Learn more about the core SDK](docs/rosmicropy-sdk/README.md)
+The main example directories are:
 
-* #### [Learn more about MicroROS Type support](docs/implementation/typeSupport.md)
+- `python_example_code/rclpy/`: rclpy-style publisher/subscriber examples.
+- `python_example_code/other/`: lower-level ROSMicroPy SDK examples.
+- `python_example_code/RMPCore/`: robot-oriented examples.
 
+## Historical Docs
 
-### Current Build Profiles supported by ROSMicroPy
-
-The core stack provides the basic functionality of a ROS enabled Micropython node  
-
-![](docs/images/RMP_CoreStack.svg)
-
-From it's core configuration, there are other ROSMicroPy modules that can be configured to provide additional functionality. 
-
-![](docs/images/RMP_LCD_Stack.svg)
-
-The **LCD Controller** introduces to new modules;
-
-***ROSMicroPy-GUI***, is a [JSON Forms](https://jsonforms.io/) renderer for LVGL that allows for a Web based GUI layout designer to produce a JSON description of a screen layout that can be saved on a ROSMicroPy device.
-
-***ROSMiicroPy-JoyCon***, is a Bluetooth HID Central Server, that makes the inputs of a JoyCon device available for the ROSMicroPy environment. 
-
-![](docs/images/RMP_Cam_Stack.svg)
-
-***ROSMicroPy-CAM*** module allows an ESP32 Cam to publish a video stream in ROS format that can be received by another ROSMicroPy or other ROS enabled device. As images are pulled from the Camera, they are passed to the Python layer to be sent out as a ROS message or allow it to be analyzed by an image processing library such as [YOLO](https://www.kdnuggets.com/2018/09/object-detection-image-classification-yolo.html)
+Older documentation has been preserved in `old_docs/`. The current docs in `docs/` are intended to be the maintained entry point.
