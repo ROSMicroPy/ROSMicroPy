@@ -10,15 +10,15 @@ The older direct MicroPython ABI exported through `uros_mp_reg` remains for olde
 
 ### End User Track
 
-- [End user overview](docs/user-guide.md)
-- [rclpy programming](docs/rclpy-guide.md)
-- [Startup and bridge configuration](docs/configuration-and-startup.md)
-- [Deprecated MicroPython ABI](docs/micropython-sdk-guide.md)
+- [End user overview](readme_docs/user-guide.md)
+- [rclpy programming](readme_docs/rclpy-guide.md)
+- [Startup and bridge configuration](readme_docs/configuration-and-startup.md)
+- [Deprecated MicroPython ABI](readme_docs/micropython-sdk-guide.md)
 
 ### Technical Track
 
-- [Technical architecture](docs/technical-architecture.md)
-- [Type support and serialization internals](docs/type-support-and-serialization.md)
+- [Technical architecture](readme_docs/technical-architecture.md)
+- [Type support and serialization internals](readme_docs/type-support-and-serialization.md)
 
 The diagrams in the documentation use fenced `mermaid` blocks, which GitHub renders directly in Markdown files, issues, pull requests, discussions, and wikis.
 
