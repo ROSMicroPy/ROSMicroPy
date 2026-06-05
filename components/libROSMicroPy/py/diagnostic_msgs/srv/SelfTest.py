@@ -5,4 +5,4 @@ class SelfTest:
     Request = SelfTest_Request
     Response = SelfTest_Response
 
-__all__ = ["SelfTest"]
+__all__ = ['SelfTest']

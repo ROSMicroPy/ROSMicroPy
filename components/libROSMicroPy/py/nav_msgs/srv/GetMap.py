@@ -5,4 +5,4 @@ class GetMap:
     Request = GetMap_Request
     Response = GetMap_Response
 
-__all__ = ["GetMap"]
+__all__ = ['GetMap']

@@ -9,6 +9,8 @@
 #include "py/runtime.h"
 #include "py/obj.h"
 #include "py/mpstate.h"
+#include "py/nlr.h"
+#include "py/mpprint.h"
 
 #include "rcl/rcl.h"
 #include "rcl/error_handling.h"
@@ -186,8 +188,13 @@ void service_callback(const void *response, void *context) {
     const mp_obj_t *mp_data = (const mp_obj_t *)response;
     ros_subscription* ros_sub = (ros_subscription *)context;
 
-    // mp_obj_t data = createObjFromThread();
-    mp_call_function_1(ros_sub->mpEventCallback, (mp_obj_t)*mp_data);
+    nlr_buf_t nlr;
+    if (nlr_push(&nlr) == 0) {
+        mp_call_function_1(ros_sub->mpEventCallback, (mp_obj_t)*mp_data);
+        nlr_pop();
+    } else {
+        mp_obj_print_exception(&mp_plat_print, MP_OBJ_FROM_PTR(nlr.ret_val));
+    }
 }
 
 

@@ -9,7 +9,7 @@ _TYPE_DEFS = {
     'Float32MultiArray': ('Float32MultiArray', 'std_msgs::msg', (('layout', 'MultiArrayLayout', (('dim', 'MultiArrayDimension', (('label', 'string', (), False, False, 0), ('size', 'uint32', (), False, False, 0), ('stride', 'uint32', (), False, False, 0)), False, True, 0), ('data_offset', 'uint32', (), False, False, 0)), False, False, 0), ('data', 'float32', (), False, True, 0))),
     'Float64': ('Float64', 'std_msgs::msg', (('data', 'float64', (), False, False, 0),)),
     'Float64MultiArray': ('Float64MultiArray', 'std_msgs::msg', (('layout', 'MultiArrayLayout', (('dim', 'MultiArrayDimension', (('label', 'string', (), False, False, 0), ('size', 'uint32', (), False, False, 0), ('stride', 'uint32', (), False, False, 0)), False, True, 0), ('data_offset', 'uint32', (), False, False, 0)), False, False, 0), ('data', 'float64', (), False, True, 0))),
-    'Header': ('Header', 'std_msgs::msg', (('stamp', 'Time', (), False, False, 0), ('frame_id', 'string', (), False, False, 0))),
+    'Header': ('Header', 'std_msgs::msg', (('stamp', 'Time', (('sec', 'int32', (), False, False, 0), ('nanosec', 'uint32', (), False, False, 0)), False, False, 0), ('frame_id', 'string', (), False, False, 0))),
     'Int16': ('Int16', 'std_msgs::msg', (('data', 'int16', (), False, False, 0),)),
     'Int16MultiArray': ('Int16MultiArray', 'std_msgs::msg', (('layout', 'MultiArrayLayout', (('dim', 'MultiArrayDimension', (('label', 'string', (), False, False, 0), ('size', 'uint32', (), False, False, 0), ('stride', 'uint32', (), False, False, 0)), False, True, 0), ('data_offset', 'uint32', (), False, False, 0)), False, False, 0), ('data', 'int16', (), False, True, 0))),
     'Int32': ('Int32', 'std_msgs::msg', (('data', 'int32', (), False, False, 0),)),

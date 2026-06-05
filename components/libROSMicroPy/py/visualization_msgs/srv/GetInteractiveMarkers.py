@@ -5,4 +5,4 @@ class GetInteractiveMarkers:
     Request = GetInteractiveMarkers_Request
     Response = GetInteractiveMarkers_Response
 
-__all__ = ["GetInteractiveMarkers"]
+__all__ = ['GetInteractiveMarkers']

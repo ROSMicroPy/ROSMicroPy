@@ -17,11 +17,14 @@ from rclpy.node import Node
 
 from std_msgs.msg import String
 from config import init_rclpy
-
+import logging
 
 class MinimalSubscriber(Node):
 
     def __init__(self):
+        # Initialize the named logger instance
+        self.logger = logging.getLogger("minimal_subscriber")
+        self.logger.setLevel(logging.INFO) # Ignores lower-priority DEBUG logs
         super().__init__('minimal_subscriber')
         self.subscription = self.create_subscription(
             String,
@@ -31,6 +34,7 @@ class MinimalSubscriber(Node):
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
+        print("listener callback")
         self.get_logger().info('I heard: "%s"' % msg.data)
 
 

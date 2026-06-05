@@ -5,4 +5,4 @@ class CancelGoal:
     Request = CancelGoal_Request
     Response = CancelGoal_Response
 
-__all__ = ["CancelGoal"]
+__all__ = ['CancelGoal']

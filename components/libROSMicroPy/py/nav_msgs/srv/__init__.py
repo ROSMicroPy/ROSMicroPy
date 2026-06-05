@@ -10,4 +10,4 @@ from .GetMap import GetMap
 from .GetPlan import GetPlan
 from .LoadMap import LoadMap
 from .SetMap import SetMap
-__all__ = ['GetMap_Request', 'GetMap_Response', 'GetPlan_Request', 'GetPlan_Response', 'LoadMap_Request', 'LoadMap_Response', 'SetMap_Request', 'SetMap_Response', 'GetMap', 'GetPlan', 'LoadMap', 'SetMap']
+__all__ = ['GetMap', 'GetPlan', 'LoadMap', 'SetMap']

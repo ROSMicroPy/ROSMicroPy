@@ -58,6 +58,7 @@ struct dataXferInst {
     bool isSequence;
     bool isArray;
     int  capicity;
+    int  instructionEnd;
 
     void (*deserialize) (ucdrBuffer *cdr,   dxi_t* inst, mp_obj_stk_t *obj_stack);
     void (*serialize)   (ucdrBuffer *cdr,  mp_obj_t value, dxi_t* inst);

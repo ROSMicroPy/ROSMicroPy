@@ -5,4 +5,4 @@ class SetMap:
     Request = SetMap_Request
     Response = SetMap_Response
 
-__all__ = ["SetMap"]
+__all__ = ['SetMap']

@@ -5,4 +5,4 @@ class GetPlan:
     Request = GetPlan_Request
     Response = GetPlan_Response
 
-__all__ = ["GetPlan"]
+__all__ = ['GetPlan']

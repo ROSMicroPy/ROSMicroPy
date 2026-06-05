@@ -17,11 +17,11 @@ fi
 
 DOCKER_DEF=Dockerfile.ROSConsole
 IMAGE_EXISTS=$(docker image list | grep $IMAGE_NAME )
-if [ -z "$IMAGE_EXISTS" ]; then
+#if [ -z "$IMAGE_EXISTS" ]; then
    cd docker
    echo "Building " $IMAGE_NAME " image"
    docker build -t $IMAGE_NAME -f $DOCKER_DEF .
    cd -
-fi
+#fi
 
 docker run -it --net=$NET_NAME --privileged --env DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev:/dev -v`pwd`:/opt/code $IMAGE_NAME bash

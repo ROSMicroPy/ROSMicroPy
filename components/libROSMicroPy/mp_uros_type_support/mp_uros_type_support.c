@@ -67,11 +67,15 @@ static size_t dxi_string_serialized_size(size_t current_alignment, size_t len) {
   return current_alignment - initial_alignment;
 }
 
+static size_t dxi_sequence_length_size(size_t current_alignment) {
+  return dxi_add_aligned_size(current_alignment, sizeof(uint32_t));
+}
+
 static size_t dxi_value_serialized_size(mp_obj_t value, dxi_t *inst, size_t current_alignment) {
   const size_t initial_alignment = current_alignment;
 
   if (inst->isSequence) {
-    current_alignment += dxi_add_aligned_size(current_alignment, sizeof(uint32_t));
+    current_alignment += dxi_sequence_length_size(current_alignment);
   }
 
   if (dxi_is_array_or_sequence(inst)) {
@@ -104,6 +108,260 @@ static size_t dxi_value_serialized_size(mp_obj_t value, dxi_t *inst, size_t curr
     current_alignment += dxi_string_serialized_size(current_alignment, len);
   } else {
     current_alignment += dxi_add_aligned_size(current_alignment, dxi_scalar_size(inst));
+  }
+
+  return current_alignment - initial_alignment;
+}
+
+static bool dxi_get_array_items(mp_obj_t value, dxi_t *inst, size_t *len, mp_obj_t **items) {
+  mp_obj_get_array(value, len, items);
+
+  if (inst->isSequence) {
+    if (inst->capicity > 0 && *len > (size_t)inst->capicity) {
+      mp_raise_msg_varg(&mp_type_ValueError, MP_ERROR_TEXT("ROS field '%s' exceeds sequence capacity"), inst->name);
+      return false;
+    }
+  } else if (inst->isArray) {
+    if (inst->capicity <= 0) {
+      mp_raise_msg_varg(&mp_type_ValueError, MP_ERROR_TEXT("ROS field '%s' array requires capicity"), inst->name);
+      return false;
+    }
+    if (*len != (size_t)inst->capicity) {
+      mp_raise_msg_varg(&mp_type_ValueError, MP_ERROR_TEXT("ROS field '%s' array length mismatch"), inst->name);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static bool serialize_instruction_range(dxil_t *dxil, int start, int end, mp_map_t *current_map, ucdrBuffer *cdr);
+static size_t serialized_size_instruction_range(dxil_t *dxil, int start, int end, mp_map_t *current_map, size_t current_alignment);
+static bool deserialize_instruction_range(dxil_t *dxil, int start, int end, mp_obj_t parent_obj, ucdrBuffer *cdr);
+static size_t max_serialized_size_instruction_range(dxil_t *dxil, int start, int end, bool *full_bounded, size_t current_alignment);
+
+static bool serialize_ros_type_value(dxil_t *dxil, dxi_t *inst, mp_obj_t value, ucdrBuffer *cdr) {
+  if (dxi_is_array_or_sequence(inst)) {
+    size_t len = 0;
+    mp_obj_t *items = NULL;
+    if (!dxi_get_array_items(value, inst, &len, &items)) {
+      return false;
+    }
+    if (inst->isSequence) {
+      ucdr_serialize_uint32_t(cdr, (uint32_t)len);
+    }
+    for (size_t i = 0; i < len; i++) {
+      if (!mp_obj_is_type(items[i], &mp_type_dict)) {
+        mp_raise_msg_varg(&mp_type_TypeError, MP_ERROR_TEXT("ROS field '%s' sequence item must be a dict"), inst->name);
+        return false;
+      }
+      if (!serialize_instruction_range(dxil, inst + 1 - dxil->instructionList, inst->instructionEnd, mp_obj_dict_get_map(items[i]), cdr)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if (!mp_obj_is_type(value, &mp_type_dict)) {
+    mp_raise_msg_varg(&mp_type_TypeError, MP_ERROR_TEXT("ROS field '%s' must be a dict"), inst->name);
+    return false;
+  }
+  return serialize_instruction_range(dxil, inst + 1 - dxil->instructionList, inst->instructionEnd, mp_obj_dict_get_map(value), cdr);
+}
+
+static bool serialize_instruction_range(dxil_t *dxil, int start, int end, mp_map_t *current_map, ucdrBuffer *cdr) {
+  for (int x = start; x <= end; x++) {
+    dxi_t *inst = &dxil->instructionList[x];
+    mp_map_elem_t *element = mp_map_lookup(current_map, inst->name_obj, MP_MAP_LOOKUP);
+    if (element == NULL) {
+      mp_raise_msg_varg(&mp_type_KeyError, MP_ERROR_TEXT("missing ROS field '%s'"), inst->name);
+      return false;
+    }
+
+    if (inst->isROSType) {
+      if (!serialize_ros_type_value(dxil, inst, element->value, cdr)) {
+        return false;
+      }
+      x = inst->instructionEnd;
+    } else {
+      inst->serialize(cdr, element->value, inst);
+    }
+  }
+  return true;
+}
+
+static size_t serialized_size_ros_type_value(dxil_t *dxil, dxi_t *inst, mp_obj_t value, size_t current_alignment) {
+  if (dxi_is_array_or_sequence(inst)) {
+    const size_t initial_alignment = current_alignment;
+    size_t len = 0;
+    mp_obj_t *items = NULL;
+    if (!dxi_get_array_items(value, inst, &len, &items)) {
+      return 0;
+    }
+    if (inst->isSequence) {
+      current_alignment += dxi_sequence_length_size(current_alignment);
+    }
+    for (size_t i = 0; i < len; i++) {
+      if (!mp_obj_is_type(items[i], &mp_type_dict)) {
+        return 0;
+      }
+      current_alignment += serialized_size_instruction_range(
+        dxil,
+        inst + 1 - dxil->instructionList,
+        inst->instructionEnd,
+        mp_obj_dict_get_map(items[i]),
+        current_alignment);
+    }
+    return current_alignment - initial_alignment;
+  }
+
+  if (!mp_obj_is_type(value, &mp_type_dict)) {
+    return 0;
+  }
+  return serialized_size_instruction_range(
+    dxil,
+    inst + 1 - dxil->instructionList,
+    inst->instructionEnd,
+    mp_obj_dict_get_map(value),
+    current_alignment);
+}
+
+static size_t serialized_size_instruction_range(dxil_t *dxil, int start, int end, mp_map_t *current_map, size_t current_alignment) {
+  const size_t initial_alignment = current_alignment;
+  for (int x = start; x <= end; x++) {
+    dxi_t *inst = &dxil->instructionList[x];
+    mp_map_elem_t *element = mp_map_lookup(current_map, inst->name_obj, MP_MAP_LOOKUP);
+    if (element == NULL) {
+      return 0;
+    }
+
+    if (inst->isROSType) {
+      current_alignment += serialized_size_ros_type_value(dxil, inst, element->value, current_alignment);
+      x = inst->instructionEnd;
+    } else {
+      current_alignment += dxi_value_serialized_size(element->value, inst, current_alignment);
+    }
+  }
+  return current_alignment - initial_alignment;
+}
+
+static bool deserialize_ros_type_value(dxil_t *dxil, dxi_t *inst, mp_obj_t parent_obj, ucdrBuffer *cdr) {
+  if (dxi_is_array_or_sequence(inst)) {
+    uint32_t len = 0;
+    if (inst->isSequence) {
+      ucdr_deserialize_uint32_t(cdr, &len);
+      if (inst->capicity > 0 && len > (uint32_t)inst->capicity) {
+        mp_raise_msg_varg(&mp_type_ValueError, MP_ERROR_TEXT("ROS field '%s' exceeds sequence capacity"), inst->name);
+        return false;
+      }
+    } else {
+      if (inst->capicity <= 0) {
+        mp_raise_msg_varg(&mp_type_ValueError, MP_ERROR_TEXT("ROS field '%s' array requires capicity"), inst->name);
+        return false;
+      }
+      len = (uint32_t)inst->capicity;
+    }
+
+    mp_obj_t list = mp_obj_new_list(0, NULL);
+    for (uint32_t i = 0; i < len; i++) {
+      mp_obj_t child = mp_obj_new_dict(inst->shallowComponentCount);
+      if (!deserialize_instruction_range(dxil, inst + 1 - dxil->instructionList, inst->instructionEnd, child, cdr)) {
+        return false;
+      }
+      mp_obj_list_append(list, child);
+    }
+    mp_obj_dict_store(parent_obj, inst->name_obj, list);
+    return true;
+  }
+
+  mp_obj_t child = mp_obj_new_dict(inst->shallowComponentCount);
+  mp_obj_dict_store(parent_obj, inst->name_obj, child);
+  return deserialize_instruction_range(dxil, inst + 1 - dxil->instructionList, inst->instructionEnd, child, cdr);
+}
+
+static bool deserialize_instruction_range(dxil_t *dxil, int start, int end, mp_obj_t parent_obj, ucdrBuffer *cdr) {
+  mp_obj_stk_t obj_stack;
+  obj_stack.objects[0] = parent_obj;
+  obj_stack.stkPtr = 1;
+
+  for (int x = start; x <= end; x++) {
+    dxi_t *inst = &dxil->instructionList[x];
+    if (inst->isROSType) {
+      if (!deserialize_ros_type_value(dxil, inst, parent_obj, cdr)) {
+        return false;
+      }
+      x = inst->instructionEnd;
+    } else {
+      inst->deserialize(cdr, inst, &obj_stack);
+    }
+  }
+  return true;
+}
+
+static size_t max_serialized_size_ros_type(dxil_t *dxil, dxi_t *inst, bool *full_bounded, size_t current_alignment) {
+  const size_t initial_alignment = current_alignment;
+  size_t count = 1;
+
+  if (inst->isSequence) {
+    current_alignment += dxi_sequence_length_size(current_alignment);
+    if (inst->capicity <= 0) {
+      *full_bounded = false;
+      count = MPY_UROS_DEFAULT_SEQUENCE_CAPACITY;
+    } else {
+      count = (size_t)inst->capicity;
+    }
+  } else if (inst->isArray) {
+    count = dxi_capacity_or_default(inst, 0);
+  }
+
+  for (size_t i = 0; i < count; i++) {
+    current_alignment += max_serialized_size_instruction_range(
+      dxil,
+      inst + 1 - dxil->instructionList,
+      inst->instructionEnd,
+      full_bounded,
+      current_alignment);
+  }
+
+  return current_alignment - initial_alignment;
+}
+
+static size_t max_serialized_size_instruction_range(dxil_t *dxil, int start, int end, bool *full_bounded, size_t current_alignment) {
+  const size_t initial_alignment = current_alignment;
+
+  for (int x = start; x <= end; x++) {
+    dxi_t *inst = &dxil->instructionList[x];
+    if (inst->isROSType) {
+      current_alignment += max_serialized_size_ros_type(dxil, inst, full_bounded, current_alignment);
+      x = inst->instructionEnd;
+      continue;
+    }
+
+    size_t count = 1;
+    if (inst->isSequence) {
+      current_alignment += dxi_sequence_length_size(current_alignment);
+      if (inst->capicity <= 0) {
+        *full_bounded = false;
+        count = MPY_UROS_DEFAULT_SEQUENCE_CAPACITY;
+      } else {
+        count = (size_t)inst->capicity;
+      }
+    } else if (inst->isArray) {
+      count = dxi_capacity_or_default(inst, 0);
+    }
+
+    for (size_t i = 0; i < count; i++) {
+      if (inst->kind == DXI_KIND_STRING) {
+        if (inst->capicity <= 0) {
+          *full_bounded = false;
+        }
+        current_alignment += dxi_string_serialized_size(
+          current_alignment,
+          dxi_capacity_or_default(inst, MPY_UROS_DEFAULT_STRING_CAPACITY));
+      } else {
+        current_alignment += dxi_add_aligned_size(current_alignment, dxi_scalar_size(inst));
+      }
+    }
   }
 
   return current_alignment - initial_alignment;
@@ -298,47 +556,7 @@ bool mpy_uros_typesupport_cdr_serialize(int slot, const void *untyped_ros_messag
   mp_obj_t obj_in = (mp_obj_t)untyped_ros_message;
   mp_map_t *root_obj = mp_obj_dict_get_map(obj_in);
 
-  mp_obj_stk_t obj_stack;
-  obj_stack.objects[0] = root_obj;
-  obj_stack.stkPtr = 1;
-
-  // Index 0 is the root object, do not process
-  for (int x = 1; x < dataTypeCtrlBlk->componentCount + 1; x++)
-  {
-
-    dxi_t *instruction = &dxil->instructionList[x];
-    mp_obj_t mpMap = obj_stack.objects[obj_stack.stkPtr - 1];
-
-    mp_map_elem_t *element = mp_map_lookup(mpMap, instruction->name_obj, MP_MAP_LOOKUP);
-    if (element == NULL) {
-      mp_raise_msg_varg(&mp_type_KeyError, MP_ERROR_TEXT("missing ROS field '%s'"), instruction->name);
-      return false;
-    }
-    mp_obj_t value = element->value;
-
-    if (instruction->isROSType)
-    {
-      if (!mp_obj_is_type(value, &mp_type_dict)) {
-        mp_raise_msg_varg(&mp_type_TypeError, MP_ERROR_TEXT("ROS field '%s' must be a dict"), instruction->name);
-        return false;
-      }
-      mp_map_t *mobj = mp_obj_dict_get_map(value);
-      if (obj_stack.stkPtr >= mp_obj_stack_size) {
-        mp_raise_ValueError(MP_ERROR_TEXT("ROS type nesting is too deep"));
-        return false;
-      }
-      obj_stack.objects[obj_stack.stkPtr++] = mobj;
-    }
-    else
-    {
-      instruction->serialize(cdr, value, instruction);
-    }
-
-    if (dxil->instructionList[x].islastBlk)
-      obj_stack.stkPtr--;
-  }
-
-  return true;
+  return serialize_instruction_range(dxil, 1, dataTypeCtrlBlk->componentCount, root_obj, cdr);
 }
 
 /**
@@ -348,8 +566,6 @@ bool mpy_uros_typesupport_cdr_serialize(int slot, const void *untyped_ros_messag
 bool mpy_uros_typesupport_cdr_deserialize(int slot, ucdrBuffer *cdr, void *untyped_ros_message)
 {
   (void)cdr;
-
-  mp_obj_stk_t obj_stack;
 
   if (!untyped_ros_message)
   {
@@ -361,17 +577,10 @@ bool mpy_uros_typesupport_cdr_deserialize(int slot, ucdrBuffer *cdr, void *untyp
   ros_subscription *rsub = get_ROS_Subscription(slot);
   dxil_t *dxil = rsub->dataTypeCtrlBlk->dxil;
   mp_obj_t root_obj = mp_obj_new_dict(dxil->instructionList[0].shallowComponentCount);
-  obj_stack.objects[0] = root_obj;
-  obj_stack.stkPtr = 1;
 
-  // Index 0 is the root object, do not process
-  for (int x = 1; x < rsub->dataTypeCtrlBlk->componentCount + 1; x++)
-  {
-    dxil->instructionList[x].deserialize(cdr, &dxil->instructionList[x], &obj_stack);
-    if (dxil->instructionList[x].islastBlk)
-      obj_stack.stkPtr--;
+  if (!deserialize_instruction_range(dxil, 1, rsub->dataTypeCtrlBlk->componentCount, root_obj, cdr)) {
+    return false;
   }
-
   *ros_mesg = root_obj;
 
   return true;
@@ -394,31 +603,7 @@ size_t mpy_uros_typesupport_get_serialized_size(int slot, const void *mp_obj, si
 
   mp_obj_t obj_in = (mp_obj_t)mp_obj;
   mp_map_t *root_obj = mp_obj_dict_get_map(obj_in);
-  mp_obj_stk_t obj_stack;
-  obj_stack.objects[0] = root_obj;
-  obj_stack.stkPtr = 1;
-
-  // Index 0 is the root object, do not process
-  for (int x = 1; x < dataTypeCtrlBlk->componentCount + 1; x++)
-  {
-    dxi_t *instruction = &dxil->instructionList[x];
-    mp_obj_t mpMap = obj_stack.objects[obj_stack.stkPtr - 1];
-    mp_map_elem_t *element = mp_map_lookup(mpMap, instruction->name_obj, MP_MAP_LOOKUP);
-    if (element == NULL) {
-      return 0;
-    }
-
-    if (instruction->isROSType) {
-      mp_map_t *mobj = mp_obj_dict_get_map(element->value);
-      obj_stack.objects[obj_stack.stkPtr++] = mobj;
-    } else {
-      current_alignment += dxi_value_serialized_size(element->value, instruction, current_alignment);
-    }
-
-    if (dxil->instructionList[x].islastBlk) {
-      obj_stack.stkPtr--;
-    }
-  }
+  current_alignment += serialized_size_instruction_range(dxil, 1, dataTypeCtrlBlk->componentCount, root_obj, current_alignment);
 
   return current_alignment - initial_alignment;
 }
@@ -446,38 +631,7 @@ size_t mpy_uros_typesupport_get_max_serialized_size(int slot, bool *full_bounded
   dxc_cb_t *dataTypeCtrlBlk = g_typeSupportCtrlBlks[slot];
   dxil_t *dxil = dataTypeCtrlBlk->dxil;
 
-  for (int x = 1; x < dataTypeCtrlBlk->componentCount + 1; x++) {
-    dxi_t *inst = &dxil->instructionList[x];
-    if (inst->isROSType) {
-      continue;
-    }
-
-    size_t count = 1;
-    if (inst->isSequence) {
-      current_alignment += dxi_add_aligned_size(current_alignment, sizeof(uint32_t));
-      if (inst->capicity <= 0) {
-        *full_bounded = false;
-        count = MPY_UROS_DEFAULT_SEQUENCE_CAPACITY;
-      } else {
-        count = (size_t)inst->capicity;
-      }
-    } else if (inst->isArray) {
-      count = dxi_capacity_or_default(inst, 0);
-    }
-
-    for (size_t i = 0; i < count; i++) {
-      if (inst->kind == DXI_KIND_STRING) {
-        if (inst->capicity <= 0) {
-          *full_bounded = false;
-        }
-        current_alignment += dxi_string_serialized_size(
-          current_alignment,
-          dxi_capacity_or_default(inst, MPY_UROS_DEFAULT_STRING_CAPACITY));
-      } else {
-        current_alignment += dxi_add_aligned_size(current_alignment, dxi_scalar_size(inst));
-      }
-    }
-  }
+  current_alignment += max_serialized_size_instruction_range(dxil, 1, dataTypeCtrlBlk->componentCount, full_bounded, current_alignment);
 
   return current_alignment - initial_alignment;
 }

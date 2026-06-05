@@ -12,6 +12,7 @@ from .PolygonInstance import PolygonInstance
 from .PolygonInstanceStamped import PolygonInstanceStamped
 from .PolygonStamped import PolygonStamped
 from .Pose import Pose
+from .Pose2D import Pose2D
 from .PoseArray import PoseArray
 from .PoseStamped import PoseStamped
 from .PoseWithCovariance import PoseWithCovariance
@@ -29,4 +30,4 @@ from .Vector3Stamped import Vector3Stamped
 from .VelocityStamped import VelocityStamped
 from .Wrench import Wrench
 from .WrenchStamped import WrenchStamped
-__all__ = ['Accel', 'AccelStamped', 'AccelWithCovariance', 'AccelWithCovarianceStamped', 'Inertia', 'InertiaStamped', 'Point', 'Point32', 'PointStamped', 'Polygon', 'PolygonInstance', 'PolygonInstanceStamped', 'PolygonStamped', 'Pose', 'PoseArray', 'PoseStamped', 'PoseWithCovariance', 'PoseWithCovarianceStamped', 'Quaternion', 'QuaternionStamped', 'Transform', 'TransformStamped', 'Twist', 'TwistStamped', 'TwistWithCovariance', 'TwistWithCovarianceStamped', 'Vector3', 'Vector3Stamped', 'VelocityStamped', 'Wrench', 'WrenchStamped']
+__all__ = ['Accel', 'AccelStamped', 'AccelWithCovariance', 'AccelWithCovarianceStamped', 'Inertia', 'InertiaStamped', 'Point', 'Point32', 'PointStamped', 'Polygon', 'PolygonInstance', 'PolygonInstanceStamped', 'PolygonStamped', 'Pose', 'Pose2D', 'PoseArray', 'PoseStamped', 'PoseWithCovariance', 'PoseWithCovarianceStamped', 'Quaternion', 'QuaternionStamped', 'Transform', 'TransformStamped', 'Twist', 'TwistStamped', 'TwistWithCovariance', 'TwistWithCovarianceStamped', 'Vector3', 'Vector3Stamped', 'VelocityStamped', 'Wrench', 'WrenchStamped']

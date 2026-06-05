@@ -229,11 +229,10 @@ void run_ROS_Stack() {
 	printf("\r\nROS Task running task\r\n");
 	while(1) {
 		MP_THREAD_GIL_ENTER();
-		RCSOFTCHECK(rclc_executor_spin(&rmp_rclc_executor ));
+		RCSOFTCHECK(rclc_executor_spin_some(&rmp_rclc_executor, 100 * 1000 * 1000));
 		MP_THREAD_GIL_EXIT();
 
-		printf("MicroRos Spinning\r\n");
-		const TickType_t xDelay = 2000 / portTICK_PERIOD_MS;
+		const TickType_t xDelay = 10 / portTICK_PERIOD_MS;
 		vTaskDelay( xDelay );
 	
 	}

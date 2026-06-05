@@ -104,6 +104,7 @@ mp_obj_t parseDataTypeDefinition(mp_obj_t obj_in, bool debug) {
     root_i->name_qstr = qstr_from_str("Root");
     root_i->name_obj = MP_OBJ_NEW_QSTR(root_i->name_qstr);
     root_i->shallowComponentCount=0;
+    root_i->instructionEnd=0;
 
 
     //
@@ -115,6 +116,7 @@ mp_obj_t parseDataTypeDefinition(mp_obj_t obj_in, bool debug) {
         processComponent(ctrlBlk, component, debug, false);
         root_i->shallowComponentCount++;
     }
+    root_i->instructionEnd = ctrlBlk->componentCount;
 
     return mp_obj_new_str(message_name, strlen(message_name));
 }
@@ -161,6 +163,7 @@ bool processComponent(dxc_cb_t *ctrlBlk, mp_obj_t obComponent,  bool debug, bool
         ctrlBlk->dxil->instructionList[ctrlBlk->index].capicity=capicity;
         ctrlBlk->dxil->instructionList[ctrlBlk->index].isSequence=isSequence;
         ctrlBlk->dxil->instructionList[ctrlBlk->index].isArray=isArray;
+        ctrlBlk->dxil->instructionList[ctrlBlk->index].instructionEnd=ctrlBlk->index;
 
 
         ctrlBlk->dxil->instructionList[ctrlBlk->index].islastBlk = false;
@@ -204,6 +207,7 @@ bool processComponent(dxc_cb_t *ctrlBlk, mp_obj_t obComponent,  bool debug, bool
                 if (ctrlBlk->index >= 1) {
                     ctrlBlk->dxil->instructionList[(ctrlBlk->index)-1].islastBlk = true; 
                 }
+                component_inst->instructionEnd = ctrlBlk->index - 1;
             }
 
         }
@@ -410,9 +414,6 @@ void populateSerDeEntries(dxi_t *component, bool debug) {
     component->serializedSize = serializedSizeROSType;
     component->isROSType = true;
     component->kind = DXI_KIND_ROS_TYPE;
-    if (component->isSequence || component->isArray) {
-        mp_raise_ValueError(MP_ERROR_TEXT("sequences/arrays of nested ROS types are not supported yet"));
-    }
     return;
        
 }

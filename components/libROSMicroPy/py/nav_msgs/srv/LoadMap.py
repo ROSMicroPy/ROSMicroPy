@@ -5,4 +5,4 @@ class LoadMap:
     Request = LoadMap_Request
     Response = LoadMap_Response
 
-__all__ = ["LoadMap"]
+__all__ = ['LoadMap']

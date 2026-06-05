@@ -15,20 +15,40 @@ def make_data_map(type_def):
     name, namespace, fields = type_def
     return {'message_name': name, 'message_namespace': namespace, 'components': [make_component(field) for field in fields]}
 
-class Message(dict):
-    __slots__ = ()
+class Message:
     _TYPE_NAME = ''
     _TYPE_DEF = None
     _fields_and_field_types = {}
 
-    def __getattr__(self, name):
+    def __getitem__(self, name):
         try:
-            return self[name]
-        except KeyError:
-            raise AttributeError(name)
+            return getattr(self, name)
+        except AttributeError:
+            raise KeyError(name)
 
-    def __setattr__(self, name, value):
-        self[name] = value
+    def __setitem__(self, name, value):
+        setattr(self, name, value)
+
+    def __contains__(self, name):
+        return name in self.__dict__
+
+    def __iter__(self):
+        return iter(self.__dict__)
+
+    def __len__(self):
+        return len(self.__dict__)
+
+    def items(self):
+        return self.__dict__.items()
+
+    def keys(self):
+        return self.__dict__.keys()
+
+    def values(self):
+        return self.__dict__.values()
+
+    def get(self, name, default=None):
+        return self.__dict__.get(name, default)
 
     @classmethod
     def get_fields_and_field_types(cls):

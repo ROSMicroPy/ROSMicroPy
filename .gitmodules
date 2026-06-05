@@ -5,3 +5,6 @@
 [submodule "components/micro_ros_espidf_component"]
 	path = components/micro_ros_espidf_component
 	url = https://github.com/micro-ROS/micro_ros_espidf_component.git
+[submodule "web-loader/esp-web-tools"]
+	path = web-loader/esp-web-tools
+	url = https://github.com/esphome/esp-web-tools.git

@@ -5,4 +5,4 @@ class AddDiagnostics:
     Request = AddDiagnostics_Request
     Response = AddDiagnostics_Response
 
-__all__ = ["AddDiagnostics"]
+__all__ = ['AddDiagnostics']

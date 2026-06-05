@@ -1,0 +1,6 @@
+_TYPE_DEFS = {
+    'State': ('State', 'lifecycle_msgs::msg', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0))),
+    'Transition': ('Transition', 'lifecycle_msgs::msg', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0))),
+    'TransitionDescription': ('TransitionDescription', 'lifecycle_msgs::msg', (('transition', 'Transition', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0)), False, False, 0), ('start_state', 'State', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0)), False, False, 0), ('goal_state', 'State', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0)), False, False, 0))),
+    'TransitionEvent': ('TransitionEvent', 'lifecycle_msgs::msg', (('timestamp', 'uint64', (), False, False, 0), ('transition', 'Transition', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0)), False, False, 0), ('start_state', 'State', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0)), False, False, 0), ('goal_state', 'State', (('id', 'uint8', (), False, False, 0), ('label', 'string', (), False, False, 0)), False, False, 0))),
+}

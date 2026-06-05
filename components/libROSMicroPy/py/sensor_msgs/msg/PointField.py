@@ -13,9 +13,6 @@ class PointField(Message):
     UINT32 = 6
     FLOAT32 = 7
     FLOAT64 = 8
-    INT64 = 9
-    UINT64 = 10
-    BOOL = 11
 
     def __init__(self, name=None, offset=None, datatype=None, count=None):
         self['name'] = '' if name is None else name

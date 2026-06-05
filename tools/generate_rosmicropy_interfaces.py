@@ -11,7 +11,12 @@ OUT = ROOT / "components/libROSMicroPy/py"
 
 SOURCES = [
     ROOT / "ext_lib/common_interfaces",
-    ROOT / "components/micro_ros_espidf_component/micro_ros_src/src/rcl_interfaces/action_msgs",
+    ROOT / "components/micro_ros_espidf_component/micro_ros_src/src/common_interfaces",
+    ROOT / "components/micro_ros_espidf_component/micro_ros_src/src/rcl_interfaces",
+    ROOT / "components/micro_ros_espidf_component/micro_ros_src/src/unique_identifier_msgs",
+    ROOT / "components/micro_ros_espidf_component/micro_ros_src/src/micro_ros_msgs",
+    ROOT / "components/micro_ros_espidf_component/micro_ros_src/src/example_interfaces",
+    ROOT / "components/micro_ros_espidf_component/micro_ros_src/src/test_interface_files",
 ]
 
 PRIMITIVES = {
@@ -26,6 +31,7 @@ ALIASES = {
     "octet": "uint8",
     "float": "float32",
     "double": "float64",
+    "wstring": "string",
 }
 
 TYPE_RE = re.compile(r"^(?P<base>[A-Za-z][A-Za-z0-9_/]*)(?:<=(?P<bound>\d+))?(?P<array>\[(?:(?P<array_bound><=)?(?P<array_len>\d+)?)?\])?$")
@@ -143,7 +149,7 @@ def discover():
             continue
         roots = [source] if (source / "package.xml").exists() else [p for p in source.iterdir() if (p / "package.xml").exists()]
         for pkg_root in roots:
-            package = pkg_root.name
+            package = "test_msgs" if pkg_root.name == "test_interface_files" else pkg_root.name
             for kind in ("msg", "srv"):
                 for path in sorted((pkg_root / kind).glob("*.%s" % kind)):
                     if kind == "msg":
@@ -210,20 +216,40 @@ def make_data_map(type_def):
     name, namespace, fields = type_def
     return {'message_name': name, 'message_namespace': namespace, 'components': [make_component(field) for field in fields]}
 
-class Message(dict):
-    __slots__ = ()
+class Message:
     _TYPE_NAME = ''
     _TYPE_DEF = None
     _fields_and_field_types = {}
 
-    def __getattr__(self, name):
+    def __getitem__(self, name):
         try:
-            return self[name]
-        except KeyError:
-            raise AttributeError(name)
+            return getattr(self, name)
+        except AttributeError:
+            raise KeyError(name)
 
-    def __setattr__(self, name, value):
-        self[name] = value
+    def __setitem__(self, name, value):
+        setattr(self, name, value)
+
+    def __contains__(self, name):
+        return name in self.__dict__
+
+    def __iter__(self):
+        return iter(self.__dict__)
+
+    def __len__(self):
+        return len(self.__dict__)
+
+    def items(self):
+        return self.__dict__.items()
+
+    def keys(self):
+        return self.__dict__.keys()
+
+    def values(self):
+        return self.__dict__.values()
+
+    def get(self, name, default=None):
+        return self.__dict__.get(name, default)
 
     @classmethod
     def get_fields_and_field_types(cls):
@@ -289,7 +315,36 @@ def write_package(package, by_kind, defs):
             (kind_dir / ("%s.py" % name)).write_text("\n".join(lines) + "\n", encoding="utf-8")
             imports.append("from .%s import %s" % (name, name))
 
-        imports.append("__all__ = %r" % [entry[0] for entry in entries])
+        if kind == "srv":
+            service_names = sorted({
+                name[:-8] for name, _, _ in entries if name.endswith("_Request")
+            } | {
+                name[:-9] for name, _, _ in entries if name.endswith("_Response")
+            })
+            for service_name in service_names:
+                req_name = service_name + "_Request"
+                resp_name = service_name + "_Response"
+                if any(entry[0] == req_name for entry in entries) and any(entry[0] == resp_name for entry in entries):
+                    (kind_dir / ("%s.py" % service_name)).write_text(
+                        "from .%s import %s\n"
+                        "from .%s import %s\n\n"
+                        "class %s:\n"
+                        "    Request = %s\n"
+                        "    Response = %s\n\n"
+                        "__all__ = [%r]\n" % (
+                            req_name, req_name,
+                            resp_name, resp_name,
+                            service_name,
+                            req_name,
+                            resp_name,
+                            service_name,
+                        ),
+                        encoding="utf-8",
+                    )
+                    imports.append("from .%s import %s" % (service_name, service_name))
+            imports.append("__all__ = %r" % service_names)
+        else:
+            imports.append("__all__ = %r" % [entry[0] for entry in entries])
         (kind_dir / "__init__.py").write_text("\n".join(imports) + "\n", encoding="utf-8")
 
 
