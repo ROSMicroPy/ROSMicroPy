@@ -1,6 +1,7 @@
 
 *.a
 *.out
+*.pyc
 
 archive/**
 Archive/**

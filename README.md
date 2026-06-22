@@ -12,6 +12,7 @@ The older direct MicroPython ABI exported through `uros_mp_reg` remains for olde
 
 - [End user overview](readme_docs/user-guide.md)
 - [rclpy programming](readme_docs/rclpy-guide.md)
+- [Service server mode](readme_docs/server-mode.md)
 - [Startup and bridge configuration](readme_docs/configuration-and-startup.md)
 - [Deprecated MicroPython ABI](readme_docs/micropython-sdk-guide.md)
 
@@ -19,6 +20,7 @@ The older direct MicroPython ABI exported through `uros_mp_reg` remains for olde
 
 - [Technical architecture](readme_docs/technical-architecture.md)
 - [Type support and serialization internals](readme_docs/type-support-and-serialization.md)
+- [Release notes](RELEASES.md)
 
 The diagrams in the documentation use fenced `mermaid` blocks, which GitHub renders directly in Markdown files, issues, pull requests, discussions, and wikis.
 
@@ -26,6 +28,8 @@ The diagrams in the documentation use fenced `mermaid` blocks, which GitHub rend
 
 The main example directories are:
 
-- `python_example_code/rclpy/`: rclpy publisher/subscriber examples.
-- `python_example_code/other/`: older direct ABI examples.
-- `python_example_code/RMPCore/`: robot-oriented examples.
+- [`examples/rclpy_pubsub/`](examples/rclpy_pubsub/): rclpy publisher and subscriber examples.
+- [`examples/rclpy_services/`](examples/rclpy_services/): service server and client examples.
+- [`examples/deprecated/`](examples/deprecated/): older direct-ABI and robot examples.
+
+Edit the `config.py` beside an example before copying it to a device. It contains the micro-ROS agent address, port, namespace, and ROS domain ID.
