@@ -1,0 +1,10 @@
+{
+  "name": "RCLPY Simple Service example",
+  "urls": [
+    ["/rclpy_services/service_server.py", "./service_server.py"],
+    ["/rclpy_services/service_client.py", "./service_client.py"],
+    ["/rclpy_services/config.py", "./config.py"],
+    ["/rclpy_services/package.json", "./package.json"]
+  ],
+  "version": "0.100"
+}

@@ -574,11 +574,11 @@ bool mpy_uros_typesupport_cdr_deserialize(int slot, ucdrBuffer *cdr, void *untyp
 
   void **ros_mesg = untyped_ros_message;
 
-  ros_subscription *rsub = get_ROS_Subscription(slot);
-  dxil_t *dxil = rsub->dataTypeCtrlBlk->dxil;
+  dxc_cb_t *dataTypeCtrlBlk = g_typeSupportCtrlBlks[slot];
+  dxil_t *dxil = dataTypeCtrlBlk->dxil;
   mp_obj_t root_obj = mp_obj_new_dict(dxil->instructionList[0].shallowComponentCount);
 
-  if (!deserialize_instruction_range(dxil, 1, rsub->dataTypeCtrlBlk->componentCount, root_obj, cdr)) {
+  if (!deserialize_instruction_range(dxil, 1, dataTypeCtrlBlk->componentCount, root_obj, cdr)) {
     return false;
   }
   *ros_mesg = root_obj;
