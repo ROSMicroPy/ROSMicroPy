@@ -8,6 +8,10 @@ The older direct MicroPython ABI exported through `uros_mp_reg` remains for olde
 
 ## Documentation
 
+The [ROSMicroPy documentation site](https://ROSMicroPy.github.io/ROSMicroPy/) includes installation, API compatibility, firmware development, and troubleshooting. Start with [Installation and first node](readme_docs/getting-started.md).
+
+GitHub Actions builds and deploys the site on pushes to `main`, including merges. See [Maintaining this site](readme_docs/documentation.md) for local builds and the one-time Pages configuration. The existing firmware loader in `docs/` is published alongside the documentation.
+
 ### End User Track
 
 - [End user overview](readme_docs/user-guide.md)

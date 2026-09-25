@@ -10,3 +10,7 @@ Supported builds:
 - `rmp_core_s3` for ESP32-S3 boards
 
 The firmware files in `firmware/` are copied from the top-level `release/` directory.
+
+## Documentation site integration
+
+The GitHub Actions documentation workflow builds Markdown from `readme_docs/` and publishes this installer at `install/index.html` alongside it. The source files in this directory stay in place. The build also preserves the published root `manifest.json` and `firmware/` paths. See [Maintaining this site](../readme_docs/documentation.md) for deployment and preview instructions.

@@ -71,7 +71,9 @@ future = client.call_async(request)
 future.add_done_callback(lambda done: print(done.result().sum))
 ```
 
-Keep spinning the node so the response subscription can run. For a blocking request, use `client.call(request)` or:
+Prefer calling `call_async()` from a timer while `rclpy.spin(node)` is active, as the complete client example does. `spin()` starts the native executor; `spin_once()` and `spin_until_future_complete()` do not.
+
+The following blocking wait requires the native executor to have already started. `client.call(request)` has the same requirement and waits without a timeout:
 
 ```python
 future = client.call_async(request)
@@ -79,6 +81,8 @@ rclpy.spin_until_future_complete(node, future, timeout_sec=5.0)
 
 if future.done():
     print(future.result().sum)
+else:
+    print("Timed out; request is still pending")
 ```
 
 ## Current Limits
@@ -89,4 +93,4 @@ if future.done():
 - Service publishers and subscriptions consume the same fixed runtime slots as normal topic endpoints. One server uses one publisher and one subscription; one active client also uses one of each.
 - QoS arguments are accepted for API compatibility but are not currently applied to the native endpoints.
 
-The full runnable pair is in [`examples/rclpy_services/`](../examples/rclpy_services/).
+The full runnable pair is in [`examples/rclpy_services/`](https://github.com/ROSMicroPy/ROSMicroPy/tree/main/examples/rclpy_services).

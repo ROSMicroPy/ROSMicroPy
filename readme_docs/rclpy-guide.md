@@ -39,6 +39,7 @@ class MinimalPublisher(Node):
     def __init__(self):
         super().__init__("minimal_publisher")
         self.publisher_ = self.create_publisher(String, "topic", 10)
+        self.timer = self.create_timer(1.0, self.publish_once)
 
     def publish_once(self):
         msg = String()
@@ -49,6 +50,9 @@ def main(args=None):
     init_rclpy(rclpy, "minimal_publisher", args=args)
     node = MinimalPublisher()
     rclpy.spin(node)
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## Subscriber Example
@@ -76,6 +80,9 @@ def main(args=None):
     init_rclpy(rclpy, "minimal_subscriber", args=args)
     node = MinimalSubscriber()
     rclpy.spin(node)
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## Timers
@@ -90,7 +97,7 @@ self.timer = self.create_timer(1.0, self.timer_callback)
 
 ROSMicroPy provides `Node.create_service()`, `Node.create_client()`, `Future`, and `spin_until_future_complete()` for embedded request/response programs. The API looks like rclpy, but the transport currently uses paired ROS topics rather than native ROS 2 service entities.
 
-See [Service server mode](server-mode.md) for setup, examples, topic names, and current limits. Complete examples are in [`examples/rclpy_services/`](../examples/rclpy_services/).
+See [Service server mode](server-mode.md) for setup, examples, topic names, and current limits. Complete examples are in [`examples/rclpy_services/`](https://github.com/ROSMicroPy/ROSMicroPy/tree/main/examples/rclpy_services).
 
 ## Implemented API At A Glance
 
@@ -107,3 +114,7 @@ See [Service server mode](server-mode.md) for setup, examples, topic names, and 
 - Replace desktop-only APIs with small embedded equivalents when needed.
 - Configure the micro-ROS agent address with `rclpy.init(...)` or the shared example helper.
 - Treat output such as `unimplemented: <name>` as a compatibility boundary, not a successful operation.
+
+## Execution and lifecycle limits
+
+`spin()` starts the native ROS task. `spin_once()` only services Python timers and does not start that task. Shutdown and node destruction update Python state but do not release native resources. Use one native node per device session and reset before reinitializing. See the [API reference](api-reference.md) for exact behavior.
