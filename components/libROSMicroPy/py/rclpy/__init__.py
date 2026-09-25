@@ -5,6 +5,7 @@ import time as _time
 _initialized = False
 _current_node = None
 _ros_stack_started = False
+_service_topics = {}
 _registered_types = {}
 _startup_config = {
     "agent_ip": "192.16.0.50",
@@ -182,6 +183,19 @@ def _from_plain_data(msg_type, value):
     return msg
 
 
+def _service_topic(service_name, suffix):
+    service_name = service_name.strip("/")
+    return "{}/_{}".format(service_name, suffix)
+
+
+def _service_request_type(srv_type):
+    return getattr(srv_type, "Request")
+
+
+def _service_response_type(srv_type):
+    return getattr(srv_type, "Response")
+
+
 class _UnsupportedMixin:
     def __getattr__(self, name):
         def _unsupported(*args, **kwargs):
@@ -269,12 +283,140 @@ class Subscription(_UnsupportedMixin):
         self.raw_callback = raw_callback
 
 
+class Future(_UnsupportedMixin):
+    def __init__(self):
+        self._done = False
+        self._result = None
+        self._exception = None
+        self._callbacks = []
+
+    def done(self):
+        return self._done
+
+    def result(self):
+        if self._exception is not None:
+            raise self._exception
+        return self._result
+
+    def exception(self):
+        return self._exception
+
+    def set_result(self, result):
+        if self._done:
+            return
+        self._result = result
+        self._done = True
+        self._invoke_callbacks()
+
+    def set_exception(self, exception):
+        if self._done:
+            return
+        self._exception = exception
+        self._done = True
+        self._invoke_callbacks()
+
+    def add_done_callback(self, callback):
+        if self._done:
+            callback(self)
+        else:
+            self._callbacks.append(callback)
+
+    def _invoke_callbacks(self):
+        callbacks = self._callbacks
+        self._callbacks = []
+        for callback in callbacks:
+            callback(self)
+
+
+class Service(_UnsupportedMixin):
+    def __init__(self, node, srv_type, srv_name, callback):
+        self.node = node
+        self.srv_type = srv_type
+        self.srv_name = srv_name
+        self.callback = callback
+        self.request_type = _service_request_type(srv_type)
+        self.response_type = _service_response_type(srv_type)
+        self.request_topic = _service_topic(srv_name, "request")
+        self.response_topic = _service_topic(srv_name, "response")
+        print("Init Service Server Response Publisher Name={}".format(self.response_topic))
+        self.publisher = node.create_publisher(self.response_type, self.response_topic, 10)
+        print("Init Service Server Request Subscription Name={}".format(self.request_topic))
+        self.subscription = node.create_subscription(
+            self.request_type,
+            self.request_topic,
+            self._handle_request,
+            10,
+        )
+
+    def _handle_request(self, request):
+        response = self.response_type()
+        result = self.callback(request, response)
+        if result is not None:
+            response = result
+        self.publisher.publish(response)
+
+
+class Client(_UnsupportedMixin):
+    def __init__(self, node, srv_type, srv_name):
+        self.node = node
+        self.srv_type = srv_type
+        self.srv_name = srv_name
+        self.request_type = _service_request_type(srv_type)
+        self.response_type = _service_response_type(srv_type)
+        self.request_topic = _service_topic(srv_name, "request")
+        self.response_topic = _service_topic(srv_name, "response")
+        self._pending = []
+        self._response_subscription = None
+        print("Init Service Client Request Publisher Name={}".format(self.request_topic))
+        self.publisher = node.create_publisher(self.request_type, self.request_topic, 10)
+        self.subscription = None
+
+    def wait_for_service(self, timeout_sec=None):
+        return True
+
+    def service_is_ready(self):
+        return True
+
+    def call_async(self, request):
+        self._ensure_response_subscription()
+        future = Future()
+        self._pending.append(future)
+        self.publisher.publish(request)
+        return future
+
+    def call(self, request):
+        future = self.call_async(request)
+        spin_until_future_complete(self.node, future)
+        return future.result()
+
+    def _handle_response(self, response):
+        if not self._pending:
+            return
+        future = self._pending.pop(0)
+        future.set_result(response)
+
+    def _ensure_response_subscription(self):
+        if self._response_subscription is not None:
+            return
+
+        print("Init Service Client Response Subscription Name={}".format(self.response_topic))
+        self._response_subscription = self.node.create_subscription(
+            self.response_type,
+            self.response_topic,
+            self._handle_response,
+            10,
+        )
+        self.subscription = self._response_subscription
+
+
 class Node(_UnsupportedMixin):
     def __init__(self, node_name, namespace=""):
         self._node_name = node_name
         self._namespace = namespace
         self._publishers = []
         self._subscriptions = []
+        self._services = []
+        self._clients = []
         self._timers = []
         self._logger = Logger(node_name)
 
@@ -291,6 +433,7 @@ class Node(_UnsupportedMixin):
 
     def create_subscription(self, msg_type, topic, callback, qos_profile=None, *args, **kwargs):
         type_name = _ensure_type_registered(msg_type)
+
         def _callback(msg):
             return callback(_from_plain_data(msg_type, msg))
 
@@ -298,6 +441,17 @@ class Node(_UnsupportedMixin):
         subscription = Subscription(topic, msg_type, callback, raw_callback=_callback)
         self._subscriptions.append(subscription)
         return subscription
+
+    def create_service(self, srv_type, srv_name, callback, qos_profile=None, callback_group=None):
+        service = Service(self, srv_type, srv_name, callback)
+        self._services.append(service)
+        _service_topics[srv_name] = True
+        return service
+
+    def create_client(self, srv_type, srv_name, qos_profile=None, callback_group=None):
+        client = Client(self, srv_type, srv_name)
+        self._clients.append(client)
+        return client
 
     def create_timer(self, timer_period_sec, callback, callback_group=None, clock=None):
         timer = Timer(timer_period_sec, callback)
@@ -316,6 +470,8 @@ class Node(_UnsupportedMixin):
     def destroy_node(self):
         self._publishers = []
         self._subscriptions = []
+        self._services = []
+        self._clients = []
         self._timers = []
         return True
 
@@ -384,11 +540,24 @@ def spin(node, executor=None):
 
 
 def spin_once(*args, **kwargs):
-    return unimplemented("spin_once", *args, **kwargs)
+    node = args[0] if args else kwargs.get("node", None)
+    if node is not None:
+        for timer in tuple(getattr(node, "_timers", ())):
+            timer._call_if_ready()
+    _sleep_ms(10)
+    return None
 
 
-def spin_until_future_complete(*args, **kwargs):
-    return unimplemented("spin_until_future_complete", *args, **kwargs)
+def spin_until_future_complete(node, future, executor=None, timeout_sec=None):
+    start = _ticks_ms()
+    timeout_ms = None if timeout_sec is None else int(timeout_sec * 1000)
+
+    while ok() and not future.done():
+        spin_once(node)
+        if timeout_ms is not None and _ticks_diff(_ticks_ms(), start) >= timeout_ms:
+            break
+
+    return future
 
 
 def create_node(node_name, namespace="", context=None, cli_args=None, use_global_arguments=True, enable_rosout=True, start_parameter_services=True, parameter_overrides=None, allow_undeclared_parameters=False, automatically_declare_parameters_from_overrides=False):
@@ -413,7 +582,3 @@ def create_rate(*args, **kwargs):
 
 def Parameter(*args, **kwargs):
     return unimplemented("Parameter", *args, **kwargs)
-
-
-def Future(*args, **kwargs):
-    return unimplemented("Future", *args, **kwargs)

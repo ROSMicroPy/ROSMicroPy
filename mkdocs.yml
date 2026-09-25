@@ -1,0 +1,62 @@
+site_name: ROSMicroPy
+site_description: MicroPython applications for ROS 2 on ESP32 with micro-ROS
+site_url: https://ROSMicroPy.github.io/ROSMicroPy/
+repo_url: https://github.com/ROSMicroPy/ROSMicroPy
+repo_name: ROSMicroPy/ROSMicroPy
+edit_uri: edit/main/readme_docs/
+docs_dir: build/docs
+site_dir: site
+strict: true
+theme:
+  name: material
+  palette:
+    primary: teal
+    accent: cyan
+  features:
+    - navigation.sections
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+plugins:
+  - search
+markdown_extensions:
+  - admonition
+  - attr_list
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+extra_css:
+  - stylesheets/extra.css
+validation:
+  nav:
+    omitted_files: warn
+  links:
+    not_found: warn
+    anchors: warn
+    unrecognized_links: warn
+nav:
+  - Home: index.md
+  - Get started:
+      - Installation and first node: getting-started.md
+      - User guide: user-guide.md
+      - Configuration: configuration-and-startup.md
+  - Application development:
+      - rclpy programming: rclpy-guide.md
+      - Services and clients: server-mode.md
+      - API and compatibility: api-reference.md
+      - Troubleshooting: troubleshooting.md
+  - Firmware and internals:
+      - Building firmware: building-firmware.md
+      - Architecture: technical-architecture.md
+      - Type support and serialization: type-support-and-serialization.md
+      - Legacy ABI: micropython-sdk-guide.md
+  - Project:
+      - Release notes: releases.md
+      - Maintaining this site: documentation.md

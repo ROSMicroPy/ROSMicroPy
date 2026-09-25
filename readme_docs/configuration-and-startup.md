@@ -8,7 +8,7 @@ ROSMicroPy applications configure startup through `rclpy.init(...)`:
 
 ```python
 rclpy.init(
-    bridge_address="192.16.0.50",
+    bridge_address="192.168.8.100",
     agent_port="8888",
     node_name="minimal_publisher",
     namespace="",
@@ -16,9 +16,9 @@ rclpy.init(
 )
 ```
 
-`bridge_address` is an alias for `agent_ip`.
+`bridge_address` is an alias for `agent_ip`. Replace the example address with the address of the machine running your micro-ROS agent.
 
-The examples centralize this in `python_example_code/rclpy/config.py`.
+The publisher/subscriber and service examples centralize these settings in their respective `config.py` files under `examples/`.
 
 ## Deprecated ABI Configuration
 
@@ -26,7 +26,7 @@ The deprecated MicroPython ABI uses setters:
 
 ```python
 setNodeName("Turtle1")
-setAgentIP("192.16.0.50")
+setAgentIP("192.168.8.100")
 setAgentPort("8888")
 setDomainID(0)
 ```

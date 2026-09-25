@@ -117,6 +117,30 @@ sequenceDiagram
     Msg->>Callback: callback(message)
 ```
 
+## Service Server Mode
+
+The rclpy compatibility layer currently builds services from ordinary publishers and subscriptions. For service name `name`, the client publishes the generated request message on `name/_request`, and the server publishes the generated response message on `name/_response`.
+
+```mermaid
+sequenceDiagram
+    participant ClientApp as Client callback
+    participant Client as rclpy Client
+    participant Request as name/_request
+    participant Server as rclpy Service
+    participant Response as name/_response
+    participant Future as Client Future
+
+    ClientApp->>Client: call_async(request)
+    Client->>Request: publish request
+    Request->>Server: subscription callback
+    Server->>Server: callback(request, response)
+    Server->>Response: publish response
+    Response->>Client: response subscription
+    Client->>Future: set_result(response)
+```
+
+This is an embedded compatibility mechanism, not an rcl/rmw service entity. There is currently no request header, client identifier, or sequence number, so the Python client matches responses to futures in FIFO order. See [Service server mode](server-mode.md) for user-facing constraints.
+
 ## Slot Tables
 
 The current implementation uses fixed-size tables:
@@ -125,4 +149,4 @@ The current implementation uses fixed-size tables:
 - Publisher slots: 10
 - Subscription slots: 10
 
-This keeps the embedded runtime simple, but it means applications should register only the types, publishers, and subscriptions they need.
+This keeps the embedded runtime simple, but it means applications should register only the types, publishers, and subscriptions they need. Topic-backed service endpoints use these same publisher and subscription tables.

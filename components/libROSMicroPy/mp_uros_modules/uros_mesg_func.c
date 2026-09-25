@@ -111,7 +111,7 @@ mp_obj_t registerEventSubscription(
             g_ros_subscriptions[x].dataTypeCtrlBlk = type_CtrlBlk;
 
             g_ros_subscriptions[x].inUse = true;
-            g_ros_subscriptions[x].resp = malloc(1000); //  malloc(rti.sizeResp);
+            g_ros_subscriptions[x].resp = calloc(1, sizeof(mp_obj_t));
             add_ROS_Service_Listener(&g_ros_subscriptions[x]);
             return eventName;
         }

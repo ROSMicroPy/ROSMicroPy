@@ -2,14 +2,14 @@
 
 The `components/libROSMicroPy/py/rclpy` package is the primary user-facing API for ROSMicroPy applications. It is frozen into the firmware image with ROSMicroPy, so from an application writer's point of view it is the native way to write ROSMicroPy nodes.
 
-The goal is practical portability: take a ROS 2 `rclpy` app from your computer and run it on a ROSMicroPy node with minimal changes. ROSMicroPy currently implements the common node, publisher, subscriber, logger, timer, init, and spin calls used by small embedded nodes.
+The goal is practical portability: take a ROS 2 `rclpy` app from your computer and run it on a ROSMicroPy node with minimal changes. ROSMicroPy currently implements the common node, publisher, subscriber, logger, timer, service/client, future, init, and spin calls used by small embedded nodes.
 
 ## Default Example Configuration
 
-The example startup configuration is in `python_example_code/rclpy/config.py`:
+The example startup configuration is in `examples/rclpy_pubsub/config.py` and `examples/rclpy_services/config.py`:
 
 ```python
-BRIDGE_ADDRESS = "192.16.0.50"
+BRIDGE_ADDRESS = "192.168.8.100"
 AGENT_PORT = "8888"
 NAMESPACE = ""
 DOMAIN_ID = 0
@@ -39,6 +39,7 @@ class MinimalPublisher(Node):
     def __init__(self):
         super().__init__("minimal_publisher")
         self.publisher_ = self.create_publisher(String, "topic", 10)
+        self.timer = self.create_timer(1.0, self.publish_once)
 
     def publish_once(self):
         msg = String()
@@ -49,6 +50,9 @@ def main(args=None):
     init_rclpy(rclpy, "minimal_publisher", args=args)
     node = MinimalPublisher()
     rclpy.spin(node)
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## Subscriber Example
@@ -76,7 +80,32 @@ def main(args=None):
     init_rclpy(rclpy, "minimal_subscriber", args=args)
     node = MinimalSubscriber()
     rclpy.spin(node)
+
+if __name__ == "__main__":
+    main()
 ```
+
+## Timers
+
+`Node.create_timer(period_seconds, callback)` schedules callbacks while `rclpy.spin()` or `rclpy.spin_once()` is running. Timers are cooperative: long callbacks delay other timers and Python-side work.
+
+```python
+self.timer = self.create_timer(1.0, self.timer_callback)
+```
+
+## Service Server Mode
+
+ROSMicroPy provides `Node.create_service()`, `Node.create_client()`, `Future`, and `spin_until_future_complete()` for embedded request/response programs. The API looks like rclpy, but the transport currently uses paired ROS topics rather than native ROS 2 service entities.
+
+See [Service server mode](server-mode.md) for setup, examples, topic names, and current limits. Complete examples are in [`examples/rclpy_services/`](https://github.com/ROSMicroPy/ROSMicroPy/tree/main/examples/rclpy_services).
+
+## Implemented API At A Glance
+
+- Lifecycle: `init`, `shutdown`, `try_shutdown`, `ok`, `create_node`.
+- Spinning: `spin`, `spin_once`, `spin_until_future_complete`.
+- Node: publishers, subscriptions, timers, services, clients, logger, name, namespace, and `destroy_node`.
+- Client/future: `call`, `call_async`, `done`, `result`, `exception`, and done callbacks.
+- QoS: `QoSProfile`, `qos_profile_default`, and `qos_profile_sensor_data` are accepted compatibility objects; the native runtime currently creates default publishers and subscriptions.
 
 ## Porting Notes
 
@@ -84,3 +113,8 @@ def main(args=None):
 - Keep message types explicit, for example `create_publisher(String, "topic", 10)`.
 - Replace desktop-only APIs with small embedded equivalents when needed.
 - Configure the micro-ROS agent address with `rclpy.init(...)` or the shared example helper.
+- Treat output such as `unimplemented: <name>` as a compatibility boundary, not a successful operation.
+
+## Execution and lifecycle limits
+
+`spin()` starts the native ROS task. `spin_once()` only services Python timers and does not start that task. Shutdown and node destruction update Python state but do not release native resources. Use one native node per device session and reset before reinitializing. See the [API reference](api-reference.md) for exact behavior.

@@ -1,20 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
 
-cd /opt/rosmicropy/micropython/ports/esp32
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BOARD_DIR="${ROOT_DIR}/boards/esp32/RMP_CORE_C6"
+ESP32_PORT_DIR="${ROOT_DIR}/micropython/ports/esp32"
+RELEASE_DIR="${ROOT_DIR}/release"
 
-idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_C6 fullclean
-idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_C6 clean
+cd "${ESP32_PORT_DIR}"
 
-rm -rf build
-rm -rf managed_components
-cd /opt/rosmicropy
-sh mkdirs.sh
-cd /opt/rosmicropy/micropython/ports/esp32
+rm -rf build managed_components
 
-idf.py -D MICROPY_BOARD_DIR=/opt/rosmicropy/boards/esp32/RMP_CORE_C6 build
+cd "${ROOT_DIR}"
+sh ./mkdirs.sh
 
-cp build/micropython.bin /opt/rosmicropy/release/rmp_core_c6.bin
-cp build/micropython.elf /opt/rosmicropy/release/rmp_core_c6.elf
-cp build/micropython.map /opt/rosmicropy/release/rmp_core_c6.map
-cp build/bootloader/bootloader.bin /opt/rosmicropy/release/rmp_core_c6_bootloader.bin
-cp build/partition_table/partition-table.bin /opt/rosmicropy/release/rmp_core_c6_partition-table.bin
+make -C "${ROOT_DIR}/components/micro_ros_espidf_component" -f libmicroros.mk clean
+TARGET=esp32c6 "${ROOT_DIR}/components/prepare_microros.sh"
 
+cd "${ESP32_PORT_DIR}"
+
+idf.py -D MICROPY_BOARD_DIR="${BOARD_DIR}" build
+
+mkdir -p "${RELEASE_DIR}"
+cp build/micropython.bin "${RELEASE_DIR}/rmp_core_c6.bin"
+cp build/micropython.elf "${RELEASE_DIR}/rmp_core_c6.elf"
+cp build/micropython.map "${RELEASE_DIR}/rmp_core_c6.map"
+cp build/bootloader/bootloader.bin "${RELEASE_DIR}/rmp_core_c6_bootloader.bin"
+cp build/partition_table/partition-table.bin "${RELEASE_DIR}/rmp_core_c6_partition-table.bin"

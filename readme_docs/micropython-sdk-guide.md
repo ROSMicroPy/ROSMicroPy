@@ -12,7 +12,7 @@ Set configuration before calling `init_ROS_Stack()`:
 from ROSMicroPy import setNodeName, setAgentIP, setAgentPort, init_ROS_Stack
 
 setNodeName("Turtle1")
-setAgentIP("192.16.0.50")
+setAgentIP("192.168.8.100")
 setAgentPort("8888")
 
 init_ROS_Stack()

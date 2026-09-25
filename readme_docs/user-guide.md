@@ -1,6 +1,6 @@
 # User Guide
 
-ROSMicroPy lets a MicroPython program participate in a ROS 2 graph through micro-ROS. Your program runs on the device, creates publishers and subscriptions, and exchanges normal ROS messages with other ROS nodes through a micro-ROS agent/bridge.
+ROSMicroPy lets a MicroPython program participate in a ROS 2 graph through micro-ROS. Your program runs on the device, creates publishers, subscriptions, timers, and topic-backed services, and exchanges ROS messages through a micro-ROS agent.
 
 ## Mental Model
 
@@ -26,12 +26,14 @@ class MinimalPublisher(Node):
         super().__init__("minimal_publisher")
         self.publisher_ = self.create_publisher(String, "topic", 10)
 
-rclpy.init(bridge_address="192.16.0.50", node_name="minimal_publisher")
+rclpy.init(bridge_address="192.168.8.100", node_name="minimal_publisher")
 node = MinimalPublisher()
 rclpy.spin(node)
 ```
 
 The older direct MicroPython ABI is still present to support rclpy internally and to keep older examples running. Treat it as deprecated for application code.
+
+For request/response applications, see [service server mode](server-mode.md). Its rclpy-shaped API is implemented over a pair of ROS topics, so read the interoperability and concurrency limits before using it.
 
 ## Message Objects
 
@@ -59,4 +61,5 @@ msg = {
 - Type support is allocated into a fixed number of runtime slots.
 - Publisher and subscription slots are also fixed-size tables.
 - Nested ROS types are supported as fields, but arrays/sequences of nested ROS types are not supported yet.
+- Service mode uses request and response topics; it is not exposed as a native ROS 2 service in the graph.
 - The rclpy API is intentionally small. Unsupported calls currently fall through to an `unimplemented` placeholder.

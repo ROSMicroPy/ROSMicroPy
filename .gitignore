@@ -1,6 +1,7 @@
 
 *.a
 *.out
+*.pyc
 
 archive/**
 Archive/**
@@ -9,3 +10,7 @@ Archive/**
 build
 .images
 managed_components
+
+# Generated documentation
+/site/
+/.venv-docs/

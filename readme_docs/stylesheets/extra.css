@@ -1,0 +1,4 @@
+:root { --md-text-font: system-ui, sans-serif; }
+.md-grid { max-width: 80rem; }
+.md-typeset h1 { font-weight: 700; color: var(--md-default-fg-color); }
+.md-typeset table:not([class]) { font-size: .75rem; }
